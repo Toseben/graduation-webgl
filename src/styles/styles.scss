@@ -1,0 +1,31 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,700&display=swap");
+
+* {
+  font-family: "Open Sans", sans-serif;
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Opera and Firefox */
+  &:focus {
+    outline: none;
+  }
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #c9d7dc;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.vis-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}

@@ -1,0 +1,36 @@
+{
+  "name": "msu-graduation",
+  "version": "1.0.0",
+  "description": "Graduation",
+  "scripts": {
+    "start": "parcel public/index.html -d ./build",
+    "build": "parcel build public/index.html -d ./build"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "d3-ease": "^1.0.6",
+    "glsl-lut": "^1.1.1",
+    "glslify": "^7.0.0",
+    "lerp": "^1.0.3",
+    "parcel-plugin-glslify": "^0.1.0",
+    "react": "16.13.1",
+    "react-div-100vh": "^0.3.8",
+    "react-dom": "16.13.1",
+    "react-scripts": "3.4.1",
+    "react-spring": "8.0.27",
+    "react-three-fiber": "4.0.23",
+    "react-three-gui": "^0.1.5",
+    "three": "0.115.0"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "node-sass": "^4.13.1",
+    "parcel-bundler": "1.12.4",
+    "sass": "^1.26.3"
+  }
+}
