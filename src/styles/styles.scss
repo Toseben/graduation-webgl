@@ -29,3 +29,9 @@ body {
   right: 0;
   bottom: 0;
 }
+
+video {
+  z-index: 1000;
+  position: relative;
+  width: 20vw;
+}
