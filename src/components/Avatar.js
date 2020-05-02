@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import React, { useMemo, useEffect, useRef } from 'react'
+import React, { useMemo, useEffect, useRef, useState } from 'react'
 import { useFrame, useThree } from 'react-three-fiber';
 import { useSpring, a } from 'react-spring/three'
 import * as easings from 'd3-ease'
@@ -9,28 +9,28 @@ export default function Avatar({ texture, pos }) {
   const meshRef = useRef();
   const { camera } = useThree()
 
-  const keyMaterial = useMemo(() => {
-    return new THREE.MeshBasicMaterial({
-      map: texture
-    })
-    // return new KeyMaterial({
-    //   texture0: avatarTex,
-    //   lum: new THREE.Vector2(1, 1)
-    // })
-  }, [])
+  // const keyMaterial = useMemo(() => {
+  //   return new KeyMaterial({
+  //     texture0: avatarTex,
+  //     lum: new THREE.Vector2(1, 1)
+  //   })
+  // }, [])
 
-  useEffect(() => {
-    if (meshRef.current) meshRef.current.material = keyMaterial
-  }, [meshRef.current])
+  // useEffect(() => {
+  //   if (meshRef.current) meshRef.current.material = keyMaterial
+  // }, [meshRef.current])
 
   useFrame(() => {
     if (!meshRef.current) return
     meshRef.current.lookAt(camera.position.clone().setComponent(1, 0))
   })
 
+  const [hovered, set] = useState(false)
+  const hover = e => e.stopPropagation() && set(true)
+  const unhover = () => set(false)
+
   const spring = useSpring({
-    opacity: true ? 1 : 0,
-    config: { duration: 500, easing: easings.easeCubicInOut }
+    color: hovered ? '#ffffff' : '#171717'
   })
 
   const scale = 0.001
@@ -38,9 +38,10 @@ export default function Avatar({ texture, pos }) {
     <>
       <mesh
         ref={meshRef}
-        position={pos}>
+        position={pos}
+        onPointerOver={hover} onPointerOut={unhover}>
         <planeGeometry attach="geometry" args={[280 * scale, 480 * scale]} />
-        <meshLambertMaterial attach="material" side={THREE.DoubleSide} />
+        <a.meshLambertMaterial attach="material" side={THREE.DoubleSide} map={texture} color={spring.color} />
       </mesh>
     </>
   )
