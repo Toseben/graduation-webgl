@@ -66,7 +66,7 @@ function InstacedAvatar({ avatars, material }) {
 
     const cameraPos = cameraVector3.set(camera.position.x, 0, camera.position.z)
     for (let i = 0; i < avatars.length; ++i) {
-      colorArray[i] = i === hovered ? 0.25 : 1
+      colorArray[i] = i === hovered ? Math.max(colorArray[i] - 0.05, 0) : 1
       
       const { x, z } = avatars[i]
       scratchObject3D.position.set(x, 0, z);
