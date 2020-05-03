@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import React, { Suspense, useRef, useMemo, useEffect, useCallback } from 'react'
+import React, { Suspense, useRef, useMemo, useState, useCallback, useEffect } from 'react'
 import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { useLoader } from "react-three-fiber"
@@ -45,18 +45,42 @@ function InstacedAvatar({ avatars, material }) {
     meshRef.current = mesh
   }, [])
 
+  const colorArray = useMemo(() => {
+    const color = new Float32Array(avatars.length)
+    for (let i = 0; i < avatars.length; ++i) {
+      color[i] = 1
+    }
+    return color
+  }, [])
+
+  const [hovered, set] = useState()
+  const previous = useRef()
+  useEffect(() => void (previous.current = hovered), [hovered])
+
+  useFrame(() => {
+    for (let i = 0; i < avatars.length; ++i) {
+      colorArray[i] = i === hovered ? 0.25 : 1
+    }
+
+    meshRef.current.geometry.attributes.hover.needsUpdate = true
+  })
+
   const scale = 0.001
   return (
-    <instancedMesh ref={onRefChange} args={[null, null, avatars.length]} frustumCulled={false}>
+    <instancedMesh ref={onRefChange} args={[null, null, avatars.length]} frustumCulled={false}
+      onPointerMove={e => set(e.instanceId)} onPointerOut={e => set(undefined)}>
       <planeBufferGeometry attach="geometry" args={[280 * scale, 480 * scale]}>
-        {/* <instancedBufferAttribute attachObject={['attributes', 'color']} args={[colorArray, 3]} /> */}
+        <instancedBufferAttribute
+          attachObject={['attributes', 'hover']}
+          args={[colorArray, 1]}
+        />
       </planeBufferGeometry>
     </instancedMesh>
   )
 }
 
 function Avatars() {
-  const radius = 4
+  const radius = 3
   let avatarArray = new Array(100).fill(null)
   avatarArray = avatarArray.map((avatar, idx) => {
     const x = Math.sin(idx / avatarArray.length * Math.PI * 2) * radius

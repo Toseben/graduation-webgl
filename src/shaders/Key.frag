@@ -1,4 +1,6 @@
 varying vec2 vUv;
+varying float vHover;
+
 uniform sampler2D map;
 uniform vec2 lum;
 vec4 lumcoeff = vec4(0.299,0.587,0.114,0.);
@@ -21,6 +23,6 @@ void main()
 	amask *= vertMask;
 
 	// output texture with alpha-mask
-	gl_FragColor = vec4(a.rgb,amask);
-	if ( gl_FragColor.a < 0.25 ) discard;
+	gl_FragColor = vec4(a.rgb * 0.0,amask * vHover);
+	if ( gl_FragColor.a < 0.01 ) discard;
 }
