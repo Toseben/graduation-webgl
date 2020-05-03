@@ -6,7 +6,7 @@ export default class CustomMaterial extends THREE.ShaderMaterial {
   constructor(options) {
     const uniforms = Object.assign(THREE.ShaderLib["basic"].uniforms,
       {
-        texture0: { value: options.texture0 },
+        map: { value: options.map },
         lum: { value: options.lum },
       }
     );

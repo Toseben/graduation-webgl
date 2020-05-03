@@ -1,24 +1,43 @@
 import * as THREE from 'three'
-import React, { useMemo, useEffect, useRef, useState } from 'react'
+import React, { useMemo, useEffect, useRef, useState, useCallback } from 'react'
 import { useFrame, useThree } from 'react-three-fiber';
 import { useSpring, a } from 'react-spring/three'
 import * as easings from 'd3-ease'
-import KeyMaterial from "../shaders/KeyMaterial"
+
+import vertexShader from "../shaders/Key.vert";
+import fragmentShader from "../shaders/Key.frag";
 
 export default function Avatar({ texture, pos }) {
   const meshRef = useRef();
   const { camera } = useThree()
 
-  // const keyMaterial = useMemo(() => {
-  //   return new KeyMaterial({
-  //     texture0: avatarTex,
-  //     lum: new THREE.Vector2(1, 1)
-  //   })
-  // }, [])
+  const onRefChange = useCallback(mesh => {
+    if (meshRef.current) {
+      // Make sure to cleanup any events/references added to the last instance
+    }
 
-  // useEffect(() => {
-  //   if (meshRef.current) meshRef.current.material = keyMaterial
-  // }, [meshRef.current])
+    if (mesh) {
+      // Check if a node is actually passed. Otherwise node would be null.
+      // You can now do what you need to, addEventListeners, measure, etc.
+      const uniforms = Object.assign(THREE.ShaderLib["basic"].uniforms,
+        {
+          map: { value: texture },
+          lum: { value: new THREE.Vector2(0.0, 0.1) },
+        }
+      );
+
+      const material = new THREE.ShaderMaterial({
+        uniforms,
+        vertexShader,
+        fragmentShader,
+        transparent: true
+      })
+
+      mesh.material = material.clone()
+    }
+
+    meshRef.current = mesh
+  }, [])
 
   useFrame(() => {
     if (!meshRef.current) return
@@ -37,11 +56,21 @@ export default function Avatar({ texture, pos }) {
   return (
     <>
       <mesh
-        ref={meshRef}
+        ref={onRefChange}
         position={pos}
         onPointerOver={hover} onPointerOut={unhover}>
-        <planeGeometry attach="geometry" args={[280 * scale, 480 * scale]} />
-        <a.meshLambertMaterial attach="material" side={THREE.DoubleSide} map={texture} color={spring.color} />
+        <planeBufferGeometry attach="geometry" args={[280 * scale, 480 * scale]} />
+        {/* <shaderMaterial
+          attach="material"
+          args={[{
+            uniforms: Object.assign(THREE.ShaderLib["basic"].uniforms, {
+              map: { value: texture }
+            }),
+            vertexShader: vertShader,
+            fragmentShader: fragShader,
+          }]}
+        /> */}
+        {/* <a.meshLambertMaterial attach="material" side={THREE.DoubleSide} map={texture} color={spring.color} /> */}
       </mesh>
     </>
   )

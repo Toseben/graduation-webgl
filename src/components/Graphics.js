@@ -18,14 +18,14 @@ function ControlsOrbit() {
 }
 
 function Avatars() {
-  const avatarArray = new Array(50).fill(null)
-  const radius = 3
+  const avatarArray = new Array(100).fill(null)
+  const radius = 4
 
   const videoArray = useMemo(() => {
     let videoArray = new Array(5).fill(null)
     return videoArray.map((node, idx) => {
       const video = document.createElement('video');
-      video.src = `assets/avatar.mp4`;
+      video.src = `assets/avatar.webm`;
       video.loop = true
       video.muted = true
       video.id = `video-${idx}`

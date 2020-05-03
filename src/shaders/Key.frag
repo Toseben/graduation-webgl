@@ -1,19 +1,19 @@
 varying vec2 vUv;
-uniform sampler2D texture0;
+uniform sampler2D map;
 uniform vec2 lum;
 vec4 lumcoeff = vec4(0.299,0.587,0.114,0.);
 
 void main()
 {   
 	//punktfarbe in variable a speichern
-	vec4 a = texture2D(texture0, vUv);
+	vec4 a = texture2D(map, vUv);
 
 	//float ref = (a.r + a.b) / 2.0;
 	float ref = a.r;
 	if(ref < a.b) ref = a.b;
 	float amask = a.g - ref;
 	//amask = step(0.15,amask);
-	amask = smoothstep(0.0,0.15,amask);//low high value
+	amask = smoothstep(lum.x, lum.y ,amask);//low high value
 	float vertMask = smoothstep(0.0,0.25,vUv.y);
 
 	//invert the key
