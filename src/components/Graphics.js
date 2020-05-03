@@ -20,8 +20,12 @@ function ControlsOrbit() {
 }
 
 const scratchObject3D = new THREE.Object3D();
+const scratchVector3 = new THREE.Vector3();
+const cameraVector3 = new THREE.Vector3();
 function InstacedAvatar({ avatars, material }) {
   const meshRef = useRef();
+  const { camera } = useThree()
+
   const onRefChange = useCallback(mesh => {
     if (meshRef.current) {
       // Make sure to cleanup any events/references added to the last instance
@@ -58,11 +62,21 @@ function InstacedAvatar({ avatars, material }) {
   useEffect(() => void (previous.current = hovered), [hovered])
 
   useFrame(() => {
+    if (!meshRef.current) return
+
+    const cameraPos = cameraVector3.set(camera.position.x, 0, camera.position.z)
     for (let i = 0; i < avatars.length; ++i) {
       colorArray[i] = i === hovered ? 0.25 : 1
+      
+      const { x, z } = avatars[i]
+      scratchObject3D.position.set(x, 0, z);
+      scratchObject3D.lookAt(cameraPos)
+      scratchObject3D.updateMatrix();
+      meshRef.current.setMatrixAt(i, scratchObject3D.matrix);
     }
 
     meshRef.current.geometry.attributes.hover.needsUpdate = true
+    meshRef.current.instanceMatrix.needsUpdate = true;
   })
 
   const scale = 0.001
