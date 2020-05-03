@@ -22,5 +22,5 @@ void main()
 
 	// output texture with alpha-mask
 	gl_FragColor = vec4(a.rgb,amask);
-	// if ( gl_FragColor.a < 0.25 ) discard;
+	if ( gl_FragColor.a < 0.25 ) discard;
 }

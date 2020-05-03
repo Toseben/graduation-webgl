@@ -1,10 +1,10 @@
 import * as THREE from 'three'
-import React, { Suspense, useRef, useMemo, useEffect } from 'react'
+import React, { Suspense, useRef, useMemo, useEffect, useCallback } from 'react'
 import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { useLoader } from "react-three-fiber"
 
-import Avatar from "./Avatar"
+// import Avatar from "./Avatar"
 import vertexShader from "../shaders/Key.vert";
 import fragmentShader from "../shaders/Key.frag";
 
@@ -19,9 +19,50 @@ function ControlsOrbit() {
   )
 }
 
+const scratchObject3D = new THREE.Object3D();
+function InstacedAvatar({ avatars, material }) {
+  const meshRef = useRef();
+  const onRefChange = useCallback(mesh => {
+    if (meshRef.current) {
+      // Make sure to cleanup any events/references added to the last instance
+    }
+
+    if (mesh) {
+      // Check if a node is actually passed. Otherwise node would be null.
+      // You can now do what you need to, addEventListeners, measure, etc.
+      mesh.material = material
+
+      for (let i = 0; i < avatars.length; ++i) {
+        const { x, z } = avatars[i]
+        scratchObject3D.position.set(x, 0, z);
+        scratchObject3D.updateMatrix();
+        mesh.setMatrixAt(i, scratchObject3D.matrix);
+      }
+
+      mesh.instanceMatrix.needsUpdate = true;
+    }
+
+    meshRef.current = mesh
+  }, [])
+
+  const scale = 0.001
+  return (
+    <instancedMesh ref={onRefChange} args={[null, null, avatars.length]} frustumCulled={false}>
+      <planeBufferGeometry attach="geometry" args={[280 * scale, 480 * scale]}>
+        {/* <instancedBufferAttribute attachObject={['attributes', 'color']} args={[colorArray, 3]} /> */}
+      </planeBufferGeometry>
+    </instancedMesh>
+  )
+}
+
 function Avatars() {
-  const avatarArray = new Array(100).fill(null)
   const radius = 4
+  let avatarArray = new Array(100).fill(null)
+  avatarArray = avatarArray.map((avatar, idx) => {
+    const x = Math.sin(idx / avatarArray.length * Math.PI * 2) * radius
+    const z = Math.cos(idx / avatarArray.length * Math.PI * 2) * radius
+    return { x, z }
+  })
 
   const videoArray = useMemo(() => {
     let videoArray = new Array(5).fill(null)
@@ -52,7 +93,8 @@ function Avatars() {
         uniforms,
         vertexShader,
         fragmentShader,
-        transparent: true
+        transparent: true,
+        side: THREE.DoubleSide
       }).clone()
 
       return { video, texture, material }
@@ -69,10 +111,8 @@ function Avatars() {
 
   return (
     <group>
-      {avatarArray.map((node, idx) => {
-        const x = Math.sin(idx / avatarArray.length * Math.PI * 2) * radius
-        const z = Math.cos(idx / avatarArray.length * Math.PI * 2) * radius
-        return <Avatar key={idx} texture={videoArray[idx % videoArray.length].texture} material={videoArray[idx % videoArray.length].material} pos={new THREE.Vector3(x, 0, z)} />
+      {videoArray.map((video, idx) => {
+        return <InstacedAvatar key={idx} avatars={avatarArray.filter((avatar, i) => i % videoArray.length === idx)} material={video.material} />
       })}
     </group>
   )
