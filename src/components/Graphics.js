@@ -5,6 +5,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { useLoader } from "react-three-fiber"
 
 import Avatar from "./Avatar"
+import vertexShader from "../shaders/Key.vert";
+import fragmentShader from "../shaders/Key.frag";
 
 extend({ OrbitControls })
 function ControlsOrbit() {
@@ -41,7 +43,19 @@ function Avatars() {
       texture.format = THREE.RGBFormat;
       texture.encoding = THREE.sRGBEncoding;
 
-      return { video, texture }
+      const uniforms = Object.assign(THREE.ShaderLib["basic"].uniforms, {
+        map: { value: texture },
+        lum: { value: new THREE.Vector2(0.0, 0.1) },
+      });
+
+      const material = new THREE.ShaderMaterial({
+        uniforms,
+        vertexShader,
+        fragmentShader,
+        transparent: true
+      }).clone()
+
+      return { video, texture, material }
     })
   }, [])
 
@@ -58,7 +72,7 @@ function Avatars() {
       {avatarArray.map((node, idx) => {
         const x = Math.sin(idx / avatarArray.length * Math.PI * 2) * radius
         const z = Math.cos(idx / avatarArray.length * Math.PI * 2) * radius
-        return <Avatar key={idx} texture={videoArray[idx % videoArray.length].texture} pos={new THREE.Vector3(x, 0, z)} />
+        return <Avatar key={idx} texture={videoArray[idx % videoArray.length].texture} material={videoArray[idx % videoArray.length].material} pos={new THREE.Vector3(x, 0, z)} />
       })}
     </group>
   )

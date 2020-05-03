@@ -7,7 +7,7 @@ import * as easings from 'd3-ease'
 import vertexShader from "../shaders/Key.vert";
 import fragmentShader from "../shaders/Key.frag";
 
-export default function Avatar({ texture, pos }) {
+export default function Avatar({ texture, material, pos }) {
   const meshRef = useRef();
   const { camera } = useThree()
 
@@ -19,21 +19,7 @@ export default function Avatar({ texture, pos }) {
     if (mesh) {
       // Check if a node is actually passed. Otherwise node would be null.
       // You can now do what you need to, addEventListeners, measure, etc.
-      const uniforms = Object.assign(THREE.ShaderLib["basic"].uniforms,
-        {
-          map: { value: texture },
-          lum: { value: new THREE.Vector2(0.0, 0.1) },
-        }
-      );
-
-      const material = new THREE.ShaderMaterial({
-        uniforms,
-        vertexShader,
-        fragmentShader,
-        transparent: true
-      })
-
-      mesh.material = material.clone()
+      mesh.material = material
     }
 
     meshRef.current = mesh
