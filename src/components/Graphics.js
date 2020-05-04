@@ -22,7 +22,7 @@ function ControlsOrbit() {
 const scratchObject3D = new THREE.Object3D();
 const scratchVector3 = new THREE.Vector3();
 const cameraVector3 = new THREE.Vector3();
-function InstacedAvatar({ avatars, material }) {
+function InstacedAvatar({ id, hovered, setHovered, avatars, material }) {
   const meshRef = useRef();
   const { camera } = useThree()
 
@@ -57,17 +57,16 @@ function InstacedAvatar({ avatars, material }) {
     return color
   }, [])
 
-  const [hovered, set] = useState()
   const previous = useRef()
-  useEffect(() => void (previous.current = hovered), [hovered])
+  // useEffect(() => void (previous.current = hovered.instance), [hovered])
 
   useFrame(() => {
     if (!meshRef.current) return
 
     const cameraPos = cameraVector3.set(camera.position.x, 0, camera.position.z)
     for (let i = 0; i < avatars.length; ++i) {
-      colorArray[i] = i === hovered ? Math.max(colorArray[i] - 0.05, 0) : 1
-      
+      colorArray[i] = (hovered && i === hovered.instance && id === hovered.id) ? Math.max(colorArray[i] - 0.05, 0) : Math.min(colorArray[i] + 0.05, 1)
+
       const { x, z } = avatars[i]
       scratchObject3D.position.set(x, 0, z);
       scratchObject3D.lookAt(cameraPos)
@@ -82,7 +81,7 @@ function InstacedAvatar({ avatars, material }) {
   const scale = 0.001
   return (
     <instancedMesh ref={onRefChange} args={[null, null, avatars.length]} frustumCulled={false}
-      onPointerMove={e => set(e.instanceId)} onPointerOut={e => set(undefined)}>
+      onPointerMove={e => setHovered({ instance: e.instanceId, id: id })} onPointerOut={e => setHovered(undefined)}>
       <planeBufferGeometry attach="geometry" args={[280 * scale, 480 * scale]}>
         <instancedBufferAttribute
           attachObject={['attributes', 'hover']}
@@ -94,6 +93,8 @@ function InstacedAvatar({ avatars, material }) {
 }
 
 function Avatars() {
+  const [hovered, setHovered] = useState(undefined)
+
   const radius = 3
   let avatarArray = new Array(100).fill(null)
   avatarArray = avatarArray.map((avatar, idx) => {
@@ -150,7 +151,7 @@ function Avatars() {
   return (
     <group>
       {videoArray.map((video, idx) => {
-        return <InstacedAvatar key={idx} avatars={avatarArray.filter((avatar, i) => i % videoArray.length === idx)} material={video.material} />
+        return <InstacedAvatar key={idx} id={idx} hovered={hovered} setHovered={setHovered} avatars={avatarArray.filter((avatar, i) => i % videoArray.length === idx)} material={video.material} />
       })}
     </group>
   )
