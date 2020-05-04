@@ -12,6 +12,7 @@
     "glsl-lut": "^1.1.1",
     "glslify": "^7.0.0",
     "lerp": "^1.0.3",
+    "lorem-ipsum": "^2.0.3",
     "parcel-plugin-glslify": "^0.1.0",
     "react": "16.13.1",
     "react-div-100vh": "^0.3.8",

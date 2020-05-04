@@ -92,11 +92,9 @@ function InstacedAvatar({ id, hovered, setHovered, avatars, material }) {
   )
 }
 
-function Avatars() {
-  const [hovered, setHovered] = useState(undefined)
-
+function Avatars({ hovered, setHovered }) {
   const radius = 3
-  let avatarArray = new Array(100).fill(null)
+  let avatarArray = new Array(window.studentData.length).fill(null)
   avatarArray = avatarArray.map((avatar, idx) => {
     const x = Math.sin(idx / avatarArray.length * Math.PI * 2) * radius
     const z = Math.cos(idx / avatarArray.length * Math.PI * 2) * radius
@@ -157,7 +155,7 @@ function Avatars() {
   )
 }
 
-const Graphics = ({ }) => {
+const Graphics = ({ hovered, setHovered }) => {
   return (
     <Canvas
       gl={{ antialias: true }}
@@ -174,7 +172,7 @@ const Graphics = ({ }) => {
       <ambientLight />
       <ControlsOrbit />
       <Suspense fallback={null}>
-        <Avatars />
+        <Avatars hovered={hovered} setHovered={setHovered} />
       </Suspense>
     </Canvas>
   );
