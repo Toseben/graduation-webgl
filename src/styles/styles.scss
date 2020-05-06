@@ -19,7 +19,7 @@
 body {
   margin: 0;
   overflow: hidden;
-  background: #4f4f4f;
+  background: hsl(0, 0%, 15%);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -46,6 +46,8 @@ video {
   flex-direction: column;
   position: absolute;
   text-align: center;
+  z-index: 10;
+  text-shadow: 2px 2px 2px #000;
   .name {
     font-size: 18px;
     font-weight: 900;

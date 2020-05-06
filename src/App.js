@@ -9,9 +9,11 @@ import './styles/styles.scss';
 const [useStore, api] = create(set => ({
   // GETTERS
   hovered: undefined,
+  reflector: null,
 
   // SETTERS
-  setHovered: (hovered) => set({ hovered })
+  setHovered: (hovered) => set({ hovered }),
+  setReflector: (reflector) => set({ reflector })
 }))
 
 function getRandomInt(min, max) {

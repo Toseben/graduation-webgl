@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import React, { Suspense, useRef, useMemo, useState, useCallback, useEffect } from 'react'
 import { Canvas, useThree, useFrame } from 'react-three-fiber';
 import { useLoader } from "react-three-fiber"
+import { Reflector } from '../lib/Reflector.js';
 
 import ControlsOrbit from "./ControlsOrbit"
 import vertexShader from "../shaders/Key.vert";
@@ -56,7 +57,7 @@ function InstacedAvatar({ useStore, id, avatars, material }) {
 
     const cameraPos = cameraVector3.set(camera.position.x, 0, camera.position.z)
     for (let i = 0; i < avatars.length; ++i) {
-      colorArray[i] = (hovered && i === hovered.instance && id === hovered.id) ? Math.max(colorArray[i] - 0.05, 0) : Math.min(colorArray[i] + 0.05, 1)
+      colorArray[i] = (hovered && i === hovered.instance && id === hovered.id) ? Math.max(colorArray[i] - 0.1, 0) : Math.min(colorArray[i] + 0.1, 1)
 
       const { x, z } = avatars[i]
       scratchObject3D.position.set(x, 0, z);
@@ -79,7 +80,7 @@ function InstacedAvatar({ useStore, id, avatars, material }) {
   const scale = 0.001
   return (
     <instancedMesh ref={onRefChange} args={[null, null, avatars.length]} frustumCulled={false}
-      onPointerOver={e => onPointerMove(e)} onPointerOut={e => setHovered(undefined)}>
+      onPointerOver={e => onPointerMove(e)} onPointerOut={e => setHovered(undefined)} position={[0, 444 * scale * 0.5, 0]}>
       <planeBufferGeometry attach="geometry" args={[204 * scale, 444 * scale]}>
         <instancedBufferAttribute
           attachObject={['attributes', 'hover']}
@@ -91,7 +92,7 @@ function InstacedAvatar({ useStore, id, avatars, material }) {
 }
 
 function Avatars({ useStore }) {
-  const radius = 3.5
+  const radius = 3.75
   let avatarArray = new Array(window.studentData.length).fill(null)
   avatarArray = avatarArray.map((avatar, idx) => {
     const x = Math.sin(idx / avatarArray.length * Math.PI * 2) * radius
@@ -153,6 +154,68 @@ function Avatars({ useStore }) {
   )
 }
 
+function Background({ useStore }) {
+  const group = useRef()
+  const reflectorRef = useRef()
+  const setReflector = useStore(state => state.setReflector)
+
+  const { gl, scene, camera } = useThree()
+  // const [particleTex] = useLoader(THREE.TextureLoader, ['./assets/particles.jpg'])
+  // particleTex.encoding = THREE.sRGBEncoding;
+  const scale = 0.0065
+
+  const particleTex = useMemo(() => {
+    const video = document.createElement('video');
+    video.src = `assets/smallParticles.mp4`;
+    video.loop = true
+    video.muted = true
+    video.id = `video-particles`
+    video.load();
+    video.play();
+
+    const texture = new THREE.VideoTexture(video);
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.format = THREE.RGBFormat;
+    texture.encoding = THREE.sRGBEncoding;
+    return texture
+  }, [])
+  
+  useFrame(() => {
+    if (!group.current || !reflectorRef.current) return
+    reflectorRef.current.renderReflector(gl, scene, camera)
+
+    camera.rotation.reorder('YXZ')
+    group.current.rotation.reorder('YXZ')
+    group.current.rotation.y = camera.rotation.y
+  })
+
+  useEffect(() => {
+    const geometry = new THREE.CircleBufferGeometry(5.5, 64);
+    const groundMirror = new Reflector(geometry, {
+      clipBias: 0.003,
+      textureWidth: 256,
+      textureHeight: 256,
+      color: 0x777777
+    });
+
+    groundMirror.rotateX(-Math.PI / 2);
+    group.current.add(groundMirror);
+
+    setReflector(groundMirror)
+    reflectorRef.current = groundMirror
+  })
+
+  return (
+    <group ref={group}>
+      <mesh position={[0, 354 * scale * 0.5, -5]}>
+        <planeGeometry attach="geometry" args={[720 * scale, 354 * scale]} />
+        <meshStandardMaterial attach="material" map={particleTex} side={THREE.DoubleSide} />
+      </mesh>
+    </group>
+  )
+}
+
 const Graphics = ({ useStore }) => {
   return (
     <Canvas
@@ -163,13 +226,14 @@ const Graphics = ({ useStore }) => {
         gl.outputEncoding = THREE.sRGBEncoding
       }}
       camera={{
-        far: 100, near: 0.01, fov: 60,
-        // position: new THREE.Vector3(0, 5, 10)
+        far: 100, near: 0.01, fov: 40,
+        // position: new THREE.Vector3(0, 1, 10)
       }}>
 
       <ambientLight />
-      <ControlsOrbit />
+      <ControlsOrbit useStore={useStore} />
       <Suspense fallback={null}>
+        <Background useStore={useStore} />
         <Avatars useStore={useStore} />
       </Suspense>
     </Canvas>
