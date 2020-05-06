@@ -1,28 +1,19 @@
 import * as THREE from 'three'
 import React, { Suspense, useRef, useMemo, useState, useCallback, useEffect } from 'react'
-import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { Canvas, useThree, useFrame } from 'react-three-fiber';
 import { useLoader } from "react-three-fiber"
 
-// import Avatar from "./Avatar"
+import ControlsOrbit from "./ControlsOrbit"
 import vertexShader from "../shaders/Key.vert";
 import fragmentShader from "../shaders/Key.frag";
-
-extend({ OrbitControls })
-function ControlsOrbit() {
-  const controls = useRef()
-  const { camera, gl } = useThree()
-
-  useFrame(() => controls.current.update())
-  return (
-    <orbitControls ref={controls} args={[camera, gl.domElement]} enableDamping dampingFactor={0.1} rotateSpeed={0.5} />
-  )
-}
 
 const scratchObject3D = new THREE.Object3D();
 const scratchVector3 = new THREE.Vector3();
 const cameraVector3 = new THREE.Vector3();
-function InstacedAvatar({ id, hovered, setHovered, avatars, material }) {
+function InstacedAvatar({ useStore, id, avatars, material }) {
+  const hovered = useStore(state => state.hovered)
+  const setHovered = useStore(state => state.setHovered)
+
   const meshRef = useRef();
   const { camera } = useThree()
 
@@ -78,11 +69,18 @@ function InstacedAvatar({ id, hovered, setHovered, avatars, material }) {
     meshRef.current.instanceMatrix.needsUpdate = true;
   })
 
+  const onPointerMove = (e) => {
+    if (hovered) {
+      if (e.instanceId === hovered.instance && id === hovered.id) return
+    }
+    setHovered({ instance: e.instanceId, id: id })
+  }
+
   const scale = 0.001
   return (
     <instancedMesh ref={onRefChange} args={[null, null, avatars.length]} frustumCulled={false}
-      onPointerMove={e => setHovered({ instance: e.instanceId, id: id })} onPointerOut={e => setHovered(undefined)}>
-      <planeBufferGeometry attach="geometry" args={[280 * scale, 480 * scale]}>
+      onPointerOver={e => onPointerMove(e)} onPointerOut={e => setHovered(undefined)}>
+      <planeBufferGeometry attach="geometry" args={[204 * scale, 444 * scale]}>
         <instancedBufferAttribute
           attachObject={['attributes', 'hover']}
           args={[colorArray, 1]}
@@ -92,8 +90,8 @@ function InstacedAvatar({ id, hovered, setHovered, avatars, material }) {
   )
 }
 
-function Avatars({ hovered, setHovered }) {
-  const radius = 3
+function Avatars({ useStore }) {
+  const radius = 3.5
   let avatarArray = new Array(window.studentData.length).fill(null)
   avatarArray = avatarArray.map((avatar, idx) => {
     const x = Math.sin(idx / avatarArray.length * Math.PI * 2) * radius
@@ -105,7 +103,7 @@ function Avatars({ hovered, setHovered }) {
     let videoArray = new Array(5).fill(null)
     return videoArray.map((node, idx) => {
       const video = document.createElement('video');
-      video.src = `assets/avatar.webm`;
+      video.src = `assets/avatar_crop.webm`;
       video.loop = true
       video.muted = true
       video.id = `video-${idx}`
@@ -149,13 +147,13 @@ function Avatars({ hovered, setHovered }) {
   return (
     <group>
       {videoArray.map((video, idx) => {
-        return <InstacedAvatar key={idx} id={idx} hovered={hovered} setHovered={setHovered} avatars={avatarArray.filter((avatar, i) => i % videoArray.length === idx)} material={video.material} />
+        return <InstacedAvatar key={idx} useStore={useStore} id={idx} avatars={avatarArray.filter((avatar, i) => i % videoArray.length === idx)} material={video.material} />
       })}
     </group>
   )
 }
 
-const Graphics = ({ hovered, setHovered }) => {
+const Graphics = ({ useStore }) => {
   return (
     <Canvas
       gl={{ antialias: true }}
@@ -166,13 +164,13 @@ const Graphics = ({ hovered, setHovered }) => {
       }}
       camera={{
         far: 100, near: 0.01, fov: 60,
-        position: new THREE.Vector3(5, 2.5, 5)
+        // position: new THREE.Vector3(0, 5, 10)
       }}>
 
       <ambientLight />
       <ControlsOrbit />
       <Suspense fallback={null}>
-        <Avatars hovered={hovered} setHovered={setHovered} />
+        <Avatars useStore={useStore} />
       </Suspense>
     </Canvas>
   );

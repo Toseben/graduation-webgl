@@ -20,9 +20,9 @@ void main()
 
 	//invert the key
 	amask = 1.0 - amask;
-	amask *= vertMask;
+	// amask *= vertMask;
 
 	// output texture with alpha-mask
-	gl_FragColor = vec4(a.rgb * 0.0,amask * vHover);
+	gl_FragColor = vec4(a.rgb * 0.0, amask * vHover);
 	if ( gl_FragColor.a < 0.01 ) discard;
 }

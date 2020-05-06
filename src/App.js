@@ -1,9 +1,18 @@
 import React, { useMemo, useState } from 'react'
 import Div100vh from 'react-div-100vh'
 import { LoremIpsum } from "lorem-ipsum";
+import create from 'zustand'
 
 import Graphics from './components/Graphics';
 import './styles/styles.scss';
+
+const [useStore, api] = create(set => ({
+  // GETTERS
+  hovered: undefined,
+
+  // SETTERS
+  setHovered: (hovered) => set({ hovered })
+}))
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
@@ -28,7 +37,7 @@ const lorem = new LoremIpsum({
 });
 
 export default function App() {
-  const [hovered, setHovered] = useState(undefined)
+  const hovered = useStore(state => state.hovered)
 
   const studentData = useMemo(() => {
     let studentData = new Array(100).fill()
@@ -57,7 +66,7 @@ export default function App() {
             <p className="text">{studentData[id].text}</p>
           </>}
         </div>
-        <Graphics hovered={hovered} setHovered={setHovered} />
+        <Graphics useStore={useStore} />
       </Div100vh>
     </>
   );
