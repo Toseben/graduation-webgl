@@ -7,13 +7,15 @@ import { Reflector } from '../lib/Reflector.js';
 import ControlsOrbit from "./ControlsOrbit"
 import vertexShader from "../shaders/Key.vert";
 import fragmentShader from "../shaders/Key.frag";
+import Text from '../helpers/Text'
 
 const scratchObject3D = new THREE.Object3D();
 const scratchVector3 = new THREE.Vector3();
 const cameraVector3 = new THREE.Vector3();
-function InstacedAvatar({ useStore, id, avatars, material }) {
+function InstacedAvatar({ useStore, vidId, avatars, material }) {
   const hovered = useStore(state => state.hovered)
   const setHovered = useStore(state => state.setHovered)
+  const loadAnimDone = useStore(state => state.loadAnimDone)
 
   const meshRef = useRef();
   const { camera } = useThree()
@@ -41,7 +43,7 @@ function InstacedAvatar({ useStore, id, avatars, material }) {
     meshRef.current = mesh
   }, [])
 
-  const colorArray = useMemo(() => {
+  const hoverArray = useMemo(() => {
     const color = new Float32Array(avatars.length)
     for (let i = 0; i < avatars.length; ++i) {
       color[i] = 1
@@ -57,7 +59,7 @@ function InstacedAvatar({ useStore, id, avatars, material }) {
 
     const cameraPos = cameraVector3.set(camera.position.x, 0, camera.position.z)
     for (let i = 0; i < avatars.length; ++i) {
-      colorArray[i] = (hovered && i === hovered.instance && id === hovered.id) ? Math.max(colorArray[i] - 0.1, 0) : Math.min(colorArray[i] + 0.1, 1)
+      hoverArray[i] = (hovered && i === hovered.instance && vidId === hovered.vidId) ? Math.max(hoverArray[i] - 0.1, 0) : Math.min(hoverArray[i] + 0.1, 1)
 
       const { x, z } = avatars[i]
       scratchObject3D.position.set(x, 0, z);
@@ -71,10 +73,11 @@ function InstacedAvatar({ useStore, id, avatars, material }) {
   })
 
   const onPointerMove = (e) => {
+    if (!loadAnimDone) return
     if (hovered) {
-      if (e.instanceId === hovered.instance && id === hovered.id) return
+      if (e.instanceId === hovered.instance && vidId === hovered.vidId) return
     }
-    setHovered({ instance: e.instanceId, id: id })
+    setHovered({ instance: e.instanceId, vidId, setter: 'hover' })
   }
 
   const scale = 0.001
@@ -84,7 +87,7 @@ function InstacedAvatar({ useStore, id, avatars, material }) {
       <planeBufferGeometry attach="geometry" args={[204 * scale, 444 * scale]}>
         <instancedBufferAttribute
           attachObject={['attributes', 'hover']}
-          args={[colorArray, 1]}
+          args={[hoverArray, 1]}
         />
       </planeBufferGeometry>
     </instancedMesh>
@@ -92,10 +95,13 @@ function InstacedAvatar({ useStore, id, avatars, material }) {
 }
 
 function Avatars({ useStore }) {
+  const avatarNames = useRef()
   const silhouetteVids = useStore(state => state.silhouetteVids)
+  const setLoaded = useStore(state => state.setLoaded)
+  const studentData = useStore(state => state.studentData)
 
   const radius = 3.75
-  let avatarArray = new Array(window.studentData.length).fill(null)
+  let avatarArray = new Array(studentData.length).fill(null)
   avatarArray = avatarArray.map((avatar, idx) => {
     const x = Math.sin(idx / avatarArray.length * Math.PI * 2) * radius
     const z = Math.cos(idx / avatarArray.length * Math.PI * 2) * radius
@@ -136,6 +142,7 @@ function Avatars({ useStore }) {
         side: THREE.DoubleSide
       }).clone()
 
+      setLoaded(true)
       return { video, texture, material }
     })
   }, [])
@@ -148,24 +155,39 @@ function Avatars({ useStore }) {
   //   }
   // }, [])
 
+  useEffect(() => {
+    if (!avatarNames.current) return
+    avatarNames.current.children.forEach(name => {
+      name.lookAt(new THREE.Vector3(0, 0.5, 0))
+    })
+  }, [])
+
+
   return (
     <group>
-      {videoArray.map((video, idx) => {
-        return <InstacedAvatar key={idx} useStore={useStore} id={idx} avatars={avatarArray.filter((avatar, i) => i % silhouetteVids === idx)} material={video.material} />
-      })}
+      <group name="avatarGroup">
+        {videoArray.map((video, idx) => {
+          return <InstacedAvatar key={idx} useStore={useStore} vidId={idx} avatars={avatarArray.filter((avatar, i) => i % silhouetteVids === idx)} material={video.material} />
+        })}
+      </group>
+      <group ref={avatarNames}>
+        {avatarArray.map((pos, idx) => {
+          const name = studentData[idx].name.split(' ')[0]
+          return <Text key={idx} color="#fdfdfd" size={0.04} position={[pos.x, -0.1, pos.z]} children={name} />
+        })}
+      </group>
     </group>
   )
 }
 
 function Background({ useStore }) {
   const group = useRef()
+  const mesh = useRef()
   const reflectorRef = useRef()
   const setReflector = useStore(state => state.setReflector)
 
   const { gl, scene, camera } = useThree()
-  // const [particleTex] = useLoader(THREE.TextureLoader, ['./assets/particles.jpg'])
-  // particleTex.encoding = THREE.sRGBEncoding;
-  const scale = 0.0065
+  const scale = 0.00525
 
   const particleTex = useMemo(() => {
     const video = document.createElement('video');
@@ -183,43 +205,71 @@ function Background({ useStore }) {
     texture.encoding = THREE.sRGBEncoding;
     return texture
   }, [])
-  
+
   useFrame(() => {
-    if (!group.current || !reflectorRef.current) return
-    reflectorRef.current.renderReflector(gl, scene, camera)
+    if (!group.current) return
+    if (reflectorRef.current) reflectorRef.current.renderReflector(gl, scene, camera)
 
     camera.rotation.reorder('YXZ')
     group.current.rotation.reorder('YXZ')
     group.current.rotation.y = camera.rotation.y
   })
 
+  // useEffect(() => {
+  //   const geometry = new THREE.CircleBufferGeometry(5.5, 64);
+  //   const groundMirror = new Reflector(geometry, {
+  //     clipBias: 0.003,
+  //     textureWidth: 256,
+  //     textureHeight: 256,
+  //     color: 0x777777
+  //   });
+
+  //   groundMirror.rotateX(-Math.PI / 2);
+  //   group.current.add(groundMirror);
+
+  //   setReflector(groundMirror)
+  //   reflectorRef.current = groundMirror
+  // })
+
+  const windowResize = () => {
+    const aspect = window.innerWidth / window.innerHeight;
+    if (aspect > 1) {
+      mesh.current.scale.set(aspect, aspect, aspect)
+      mesh.current.position.set(0, 354 * scale * aspect * 0.5, -5)
+    } else {
+      const staticScale = 1.25
+      mesh.current.scale.set(staticScale, staticScale, staticScale)
+      mesh.current.position.set(0, 354 * scale * staticScale * 0.5, -5)
+    }
+  }
+
   useEffect(() => {
-    const geometry = new THREE.CircleBufferGeometry(5.5, 64);
-    const groundMirror = new Reflector(geometry, {
-      clipBias: 0.003,
-      textureWidth: 256,
-      textureHeight: 256,
-      color: 0x777777
-    });
-
-    groundMirror.rotateX(-Math.PI / 2);
-    group.current.add(groundMirror);
-
-    setReflector(groundMirror)
-    reflectorRef.current = groundMirror
-  })
+    windowResize()
+    window.addEventListener('resize', windowResize)
+    return () => {
+      window.removeEventListener('resize', windowResize)
+    }
+  }, [])
 
   return (
     <group ref={group}>
-      <mesh position={[0, 354 * scale * 0.5, -5]}>
-        <planeGeometry attach="geometry" args={[720 * scale, 354 * scale]} />
-        <meshStandardMaterial attach="material" map={particleTex} side={THREE.DoubleSide} />
-      </mesh>
+      <group ref={mesh}>
+        <mesh>
+          <planeGeometry attach="geometry" args={[720 * scale, 354 * scale]} />
+          <meshStandardMaterial attach="material" map={particleTex} side={THREE.DoubleSide} />
+        </mesh>
+        {/* <mesh rotation={[0, 0, 0]} position={[0, -354 * scale * 0.5, 354 * scale * 0.5]}>
+          <planeGeometry attach="geometry" args={[720 * scale, 354 * scale]} />
+          <meshStandardMaterial attach="material" map={particleTex} side={THREE.DoubleSide} />
+        </mesh> */}
+      </group>
     </group>
   )
 }
 
 const Graphics = ({ useStore }) => {
+  const loaded = useStore(state => state.loaded)
+
   return (
     <Canvas
       gl={{ antialias: true }}
@@ -234,11 +284,14 @@ const Graphics = ({ useStore }) => {
       }}>
 
       <ambientLight />
-      <ControlsOrbit useStore={useStore} />
       <Suspense fallback={null}>
-        <Background useStore={useStore} />
         <Avatars useStore={useStore} />
+        <Background useStore={useStore} />
       </Suspense>
+
+      {loaded &&
+        <ControlsOrbit useStore={useStore} />
+      }
     </Canvas>
   );
 };

@@ -19,7 +19,7 @@
     "react-dom": "16.13.1",
     "react-scripts": "3.4.1",
     "react-search-box": "^2.0.2",
-    "react-spring": "8.0.27",
+    "react-spring": "^8.0.27",
     "react-three-fiber": "4.0.23",
     "react-three-gui": "^0.1.5",
     "three": "0.115.0",

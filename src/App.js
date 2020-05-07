@@ -12,10 +12,16 @@ const [useStore, api] = create(set => ({
   hovered: null,
   reflector: null,
   silhouetteVids: 5,
+  loaded: false,
+  loadAnimDone: false,
+  studentData: [],
 
   // SETTERS
   setHovered: (hovered) => set({ hovered }),
-  setReflector: (reflector) => set({ reflector })
+  setReflector: (reflector) => set({ reflector }),
+  setLoaded: (loaded) => set({ loaded }),
+  setLoadAnimDone: (loadAnimDone) => set({ loadAnimDone }),
+  setStudentData: (studentData) => set({ studentData })
 }))
 
 function getRandomInt(min, max) {
@@ -25,7 +31,7 @@ function getRandomInt(min, max) {
 function generateName() {
   const name1 = ["Liane", "Sharmaine", "Micheline", "Verdell", "Angelina", "Billie", "Jaimee", "Jaye", "Thea", "Alethea", "Caroline", "Garland", "Leatrice", "Zenia", "Javier", "Nancee", "Aurora", "Ashely", "Kam", "Dorian",]
   const name2 = ["Paskett", "Birmingham", "Taketa", "Troxell", "Stengel", "Cosgrove", "Leyva", "Polasek", "Vose", "Sokoloski", "Olmstead", "Watt", "Peacock", "Knapp", "Houghtaling", "Krok", "Baucom", "Daulton", "Kopacz", "Talavera",]
-  const name = name1[getRandomInt(0, name1.length + 1)] + ' ' + name2[getRandomInt(0, name2.length + 1)];
+  const name = name1[getRandomInt(0, name1.length)] + ' ' + name2[getRandomInt(0, name2.length)];
   return name;
 }
 
@@ -44,6 +50,8 @@ export default function App() {
   const hovered = useStore(state => state.hovered)
   const setHovered = useStore(state => state.setHovered)
   const silhouetteVids = useStore(state => state.silhouetteVids)
+  const loadAnimDone = useStore(state => state.loadAnimDone)
+  const setStudentData = useStore(state => state.setStudentData)
 
   const [studentData, searchData] = useMemo(() => {
     let studentData = new Array(25).fill()
@@ -61,22 +69,22 @@ export default function App() {
       return { value: user.name, userId: user.userId }
     })
 
-    window.studentData = studentData
+    setStudentData(studentData)
     return [studentData, searchData]
   }, [])
 
-  const id = hovered ? hovered.id * studentData.length / silhouetteVids + hovered.instance : null
-
   const onSelect = record => {
+    if (!loadAnimDone) return
     const instance = record.userId % silhouetteVids
-    const id = Math.floor(record.userId / silhouetteVids);
-    setHovered({ instance: instance, id: id })
+    const vidId = Math.floor(record.userId / silhouetteVids);
+    setHovered({ instance, vidId, setter: 'search' })
   }
 
   const onChange = () => {
     if (hovered) setHovered(null)
   }
 
+  const nameId = hovered ? hovered.instance * silhouetteVids + hovered.vidId : null
   return (
     <>
       <Div100vh style={{ height: `100rvh` }} className="vis-container">
@@ -93,10 +101,10 @@ export default function App() {
         </div>
 
         <div className={`studentDetails`}>
-          {studentData[id] && <>
-            <p className="name">{studentData[id].name}</p>
-            <p className="text">{studentData[id].text}</p>
-          </>}
+          {/* {studentData[nameId] && <>
+            <p className="name">{studentData[nameId].name}</p>
+            <p className="text">{studentData[nameId].text}</p>
+          </>} */}
         </div>
         <Graphics useStore={useStore} />
       </Div100vh>
