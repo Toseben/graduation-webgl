@@ -92,6 +92,8 @@ function InstacedAvatar({ useStore, id, avatars, material }) {
 }
 
 function Avatars({ useStore }) {
+  const silhouetteVids = useStore(state => state.silhouetteVids)
+
   const radius = 3.75
   let avatarArray = new Array(window.studentData.length).fill(null)
   avatarArray = avatarArray.map((avatar, idx) => {
@@ -101,7 +103,7 @@ function Avatars({ useStore }) {
   })
 
   const videoArray = useMemo(() => {
-    let videoArray = new Array(5).fill(null)
+    let videoArray = new Array(silhouetteVids).fill(null)
     return videoArray.map((node, idx) => {
       const video = document.createElement('video');
       video.src = `assets/avatar_crop.webm`;
@@ -119,6 +121,7 @@ function Avatars({ useStore }) {
       texture.magFilter = THREE.LinearFilter;
       texture.format = THREE.RGBFormat;
       texture.encoding = THREE.sRGBEncoding;
+      texture.generateMipmaps = true
 
       const uniforms = Object.assign(THREE.ShaderLib["basic"].uniforms, {
         map: { value: texture },
@@ -148,7 +151,7 @@ function Avatars({ useStore }) {
   return (
     <group>
       {videoArray.map((video, idx) => {
-        return <InstacedAvatar key={idx} useStore={useStore} id={idx} avatars={avatarArray.filter((avatar, i) => i % videoArray.length === idx)} material={video.material} />
+        return <InstacedAvatar key={idx} useStore={useStore} id={idx} avatars={avatarArray.filter((avatar, i) => i % silhouetteVids === idx)} material={video.material} />
       })}
     </group>
   )

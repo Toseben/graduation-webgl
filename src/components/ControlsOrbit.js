@@ -23,6 +23,7 @@ export default function ControlsOrbit({useStore}) {
       camTarget: [0, height, -10],
     },
     config: { duration: 2000, easing: easings.easeSinOut },
+    delay: 1000,
     onFrame({ camPos, camTarget }) {
       if (loadAnimFinish.current) return
       camera.position.set(

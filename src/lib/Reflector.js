@@ -79,7 +79,6 @@ var Reflector = function (geometry, options) {
     vertexShader: shader.vertexShader
   });
 
-  renderTarget.texture.generateMipmaps = true;
   material.uniforms["tDiffuse"].value = renderTarget.texture;
   material.uniforms["color"].value = color;
   material.uniforms["textureMatrix"].value = textureMatrix;

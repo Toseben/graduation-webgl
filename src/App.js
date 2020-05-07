@@ -2,14 +2,16 @@ import React, { useMemo, useState } from 'react'
 import Div100vh from 'react-div-100vh'
 import { LoremIpsum } from "lorem-ipsum";
 import create from 'zustand'
+import ReactSearchBox from 'react-search-box'
 
 import Graphics from './components/Graphics';
 import './styles/styles.scss';
 
 const [useStore, api] = create(set => ({
   // GETTERS
-  hovered: undefined,
+  hovered: null,
   reflector: null,
+  silhouetteVids: 5,
 
   // SETTERS
   setHovered: (hovered) => set({ hovered }),
@@ -40,9 +42,11 @@ const lorem = new LoremIpsum({
 
 export default function App() {
   const hovered = useStore(state => state.hovered)
+  const setHovered = useStore(state => state.setHovered)
+  const silhouetteVids = useStore(state => state.silhouetteVids)
 
-  const studentData = useMemo(() => {
-    let studentData = new Array(100).fill()
+  const [studentData, searchData] = useMemo(() => {
+    let studentData = new Array(25).fill()
     let counter = 0
     studentData = studentData.map(user => {
       user = {}
@@ -53,17 +57,43 @@ export default function App() {
       return user
     })
 
+    const searchData = studentData.map(user => {
+      return { value: user.name, userId: user.userId }
+    })
+
     window.studentData = studentData
-    return studentData
+    return [studentData, searchData]
   }, [])
 
-  const id = hovered ? hovered.id * 20 + hovered.instance : null
+  const id = hovered ? hovered.id * studentData.length / silhouetteVids + hovered.instance : null
+
+  const onSelect = record => {
+    const instance = record.userId % silhouetteVids
+    const id = Math.floor(record.userId / silhouetteVids);
+    setHovered({ instance: instance, id: id })
+  }
+
+  const onChange = () => {
+    if (hovered) setHovered(null)
+  }
 
   return (
     <>
       <Div100vh style={{ height: `100rvh` }} className="vis-container">
+        <div className="searchBox">
+          <ReactSearchBox
+            placeholder="Search for a name"
+            data={searchData}
+            onSelect={record => onSelect(record)}
+            onChange={() => onChange()}
+            fuseConfigs={{
+              threshold: 0.05,
+            }}
+          />
+        </div>
+
         <div className={`studentDetails`}>
-          {id && <>
+          {studentData[id] && <>
             <p className="name">{studentData[id].name}</p>
             <p className="text">{studentData[id].text}</p>
           </>}
