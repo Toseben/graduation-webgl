@@ -22,6 +22,7 @@
     "react-spring": "^8.0.27",
     "react-three-fiber": "4.0.23",
     "react-three-gui": "^0.1.5",
+    "stats.js": "^0.17.0",
     "three": "0.115.0",
     "zustand": "^2.2.3"
   },

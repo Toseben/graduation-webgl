@@ -3,6 +3,7 @@ import React, { Suspense, useRef, useMemo, useState, useCallback, useEffect } fr
 import { Canvas, useThree, useFrame } from 'react-three-fiber';
 import { useLoader } from "react-three-fiber"
 import { Reflector } from '../lib/Reflector.js';
+import Stats from 'stats.js'
 
 import ControlsOrbit from "./ControlsOrbit"
 import vertexShader from "../shaders/Key.vert";
@@ -314,6 +315,26 @@ function Background({ useStore }) {
   )
 }
 
+function FPS({ useStore }) {
+  const stats = useRef()
+  useEffect(() => {
+    stats.current = new Stats();
+    stats.current.showPanel(0);
+    stats.current.dom.classList.add('stats');
+    document.body.appendChild(stats.current.dom);
+  }, [])
+
+  useFrame(() => {
+    if (!stats.current) return
+    stats.current.begin();
+    stats.current.end();
+  })
+
+  return (
+    <></>
+  )
+}
+
 const Graphics = ({ useStore }) => {
   const loaded = useStore(state => state.loaded)
 
@@ -331,6 +352,8 @@ const Graphics = ({ useStore }) => {
       }}>
 
       <ambientLight />
+      <FPS useStore={useStore} />
+
       <Suspense fallback={null}>
         <Avatars useStore={useStore} />
         <Background useStore={useStore} />
