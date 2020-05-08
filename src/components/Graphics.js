@@ -99,13 +99,13 @@ function Avatars({ useStore }) {
   const silhouetteVids = useStore(state => state.silhouetteVids)
   const setLoaded = useStore(state => state.setLoaded)
   const studentData = useStore(state => state.studentData)
+  const hovered = useStore(state => state.hovered)
 
   const radius = 3.75
-  let avatarArray = new Array(studentData.length).fill(null)
-  avatarArray = avatarArray.map((avatar, idx) => {
-    const x = Math.sin(idx / avatarArray.length * Math.PI * 2) * radius
-    const z = Math.cos(idx / avatarArray.length * Math.PI * 2) * radius
-    return { x, z }
+  const avatarArray = studentData.map((user, idx) => {
+    const x = Math.sin(idx / studentData.length * Math.PI * 2) * radius
+    const z = Math.cos(idx / studentData.length * Math.PI * 2) * radius
+    return { x, z, userId: user.userId }
   })
 
   const videoArray = useMemo(() => {
@@ -139,7 +139,10 @@ function Avatars({ useStore }) {
         vertexShader,
         fragmentShader,
         transparent: true,
-        side: THREE.DoubleSide
+        side: THREE.DoubleSide,
+        defines: {
+          HOVER: ''
+        }
       }).clone()
 
       setLoaded(true)
@@ -155,14 +158,49 @@ function Avatars({ useStore }) {
   //   }
   // }, [])
 
+  const cartoonVidMat = useMemo(() => {
+    const video = document.createElement('video');
+    video.src = `assets/cartoonKey.mp4`;
+    video.loop = true
+    video.muted = true
+    video.id = `cartoon-video`
+    video.load();
+    video.play()
+
+    const texture = new THREE.VideoTexture(video);
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.format = THREE.RGBFormat;
+    texture.encoding = THREE.sRGBEncoding;
+
+    const uniforms = Object.assign(THREE.ShaderLib["basic"].uniforms, {
+      map: { value: texture },
+      lum: { value: new THREE.Vector2(0.0, 0.1) },
+    });
+
+    const material = new THREE.ShaderMaterial({
+      uniforms,
+      vertexShader,
+      fragmentShader,
+      transparent: true,
+      side: THREE.DoubleSide
+    })
+
+    return material
+  }, [])
+
   useEffect(() => {
     if (!avatarNames.current) return
-    avatarNames.current.children.forEach(name => {
-      name.lookAt(new THREE.Vector3(0, 0.5, 0))
+    avatarNames.current.children.forEach(avatar => {
+      avatar.lookAt(new THREE.Vector3(0, 0.5, 0))
+      if (avatar.name === 'real-video') {
+        avatar.material = cartoonVidMat
+      }
     })
   }, [])
 
-
+  const scale = 0.000575
+  const hoveredUserId = hovered ? hovered.instance * silhouetteVids + hovered.vidId : null
   return (
     <group>
       <group name="avatarGroup">
@@ -173,7 +211,16 @@ function Avatars({ useStore }) {
       <group ref={avatarNames}>
         {avatarArray.map((pos, idx) => {
           const name = studentData[idx].name.split(' ')[0]
-          return <Text key={idx} color="#fdfdfd" size={0.04} position={[pos.x, -0.1, pos.z]} children={name} />
+
+          return (
+            <>
+              <Text key={idx} visible={hoveredUserId === idx} color="#fdfdfd" size={0.04} position={[pos.x, -0.05, pos.z]} children={name} />
+              <mesh name={`real-video`} visible={hoveredUserId === idx} position={[pos.x, 852 * scale * 0.5, pos.z]}>
+                <planeBufferGeometry attach="geometry" args={[480 * scale, 852 * scale]} />
+                <meshStandardMaterial attach="material" color="hotpink" side={THREE.DoubleSide} />
+              </mesh>
+            </>
+          )
         })}
       </group>
     </group>

@@ -1,3 +1,11 @@
+#ifdef HOVER
+	#define SILHOUETTE true
+#endif
+
+#ifndef HOVER
+	#define SILHOUETTE false
+#endif
+
 varying vec2 vUv;
 varying float vHover;
 
@@ -23,6 +31,10 @@ void main()
 	// amask *= vertMask;
 
 	// output texture with alpha-mask
-	gl_FragColor = vec4(a.rgb * 0.0, amask * vHover);
+	if (SILHOUETTE) {
+		gl_FragColor = vec4(a.rgb * 0.0, amask * vHover);
+	} else {
+		gl_FragColor = vec4(a.rgb, amask);
+	}
 	if ( gl_FragColor.a < 0.01 ) discard;
 }

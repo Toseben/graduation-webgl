@@ -11,7 +11,7 @@ const [useStore, api] = create(set => ({
   // GETTERS
   hovered: null,
   reflector: null,
-  silhouetteVids: 5,
+  silhouetteVids: 2,
   loaded: false,
   loadAnimDone: false,
   studentData: [],
@@ -54,7 +54,7 @@ export default function App() {
   const setStudentData = useStore(state => state.setStudentData)
 
   const [studentData, searchData] = useMemo(() => {
-    let studentData = new Array(25).fill()
+    let studentData = new Array(100).fill()
     let counter = 0
     studentData = studentData.map(user => {
       user = {}
@@ -100,12 +100,12 @@ export default function App() {
           />
         </div>
 
-        <div className={`studentDetails`}>
-          {/* {studentData[nameId] && <>
+        {/* <div className={`studentDetails`}>
+          {studentData[nameId] && <>
             <p className="name">{studentData[nameId].name}</p>
             <p className="text">{studentData[nameId].text}</p>
-          </>} */}
-        </div>
+          </>}
+        </div> */}
         <Graphics useStore={useStore} />
       </Div100vh>
     </>
