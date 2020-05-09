@@ -1,4 +1,3 @@
- #pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
 #pragma glslify: blur = require('glsl-fast-gaussian-blur/9')
 
 uniform vec3 color;
@@ -21,16 +20,7 @@ void main() {
 	vec2 unproj2D = vec2 (vUv.s / vUv.q,
 												vUv.t / vUv.q);
 
-	float noise = snoise3(vPosition * 4.0) + 0.5;
-	noise *= 0.0;
-	noise = texture2D(map, vUv2 * 3.0).r * 0.025;
-
-	// vec4 base = blur(tDiffuse, unproj2D + vec2(noise), vec2(64.0), normalize(vec2(0.0, -1.0)) * vec2(1.5));
-	// base += blur(tDiffuse, unproj2D + vec2(noise), vec2(64.0), normalize(vec2(1.0, 1.0)) * vec2(1.5));
-	// base += blur(tDiffuse, unproj2D + vec2(noise), vec2(64.0), normalize(vec2(-1.0, 1.0)) * vec2(1.5));
-	// base += blur(tDiffuse, unproj2D + vec2(noise), vec2(64.0), normalize(vec2(1.0, 0.0)) * vec2(1.5));
-	// base /= 4.0;
-
+	float noise = texture2D(map, vUv2 * 3.0).r * 0.025;
 	float blurSize = 0.01;
 	vec4 base = vec4(0.0);
 	for (int i = 1; i < samples; i++) {

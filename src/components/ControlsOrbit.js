@@ -14,6 +14,7 @@ export default function ControlsOrbit({ useStore }) {
   const loadAnimDone = useStore(state => state.loadAnimDone)
   const setLoadAnimDone = useStore(state => state.setLoadAnimDone)
   const reflector = useStore(state => state.reflector)
+  const setControls = useStore(state => state.setControls)
 
   const controls = useRef()
   const { gl, camera, scene } = useThree()
@@ -96,6 +97,10 @@ export default function ControlsOrbit({ useStore }) {
   // }, [])
 
   useEffect(() => {
+    controls.current.isRotating = false
+    setControls(controls.current)
+    window.controls = controls.current
+
     controls.current.enabled = false
     controls.current.mouseButtons = {
       LEFT: THREE.MOUSE.ROTATE,
@@ -104,8 +109,13 @@ export default function ControlsOrbit({ useStore }) {
     }
   }, [])
 
+  const prevRotation = useRef()
   useFrame(() => {
     controls.current.update()
+    // console.log(Math.abs(prevRotation.current - camera.rotation.y) < 0.00025)
+    controls.current.isRotating = Math.abs(prevRotation.current - camera.rotation.y) > 0.0005
+    prevRotation.current = camera.rotation.y
+
     const background = scene.getObjectByName('background')
     camera.rotation.reorder('YXZ')
     background.rotation.reorder('YXZ')
@@ -113,9 +123,9 @@ export default function ControlsOrbit({ useStore }) {
 
     if (reflector) {
       const avatarParent = scene.getObjectByName('avatarParent')
-      if (avatarParent) avatarParent.visible = false
+      // if (avatarParent) avatarParent.visible = false
       reflector.renderReflector(gl, scene, camera)
-      if (avatarParent) avatarParent.visible = true
+      // if (avatarParent) avatarParent.visible = true
     }
   })
 

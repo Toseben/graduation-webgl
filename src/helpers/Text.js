@@ -11,10 +11,12 @@ export default function Text({ children, size = 1, letterSpacing = 0.01, color =
     let mat = new THREE.MeshBasicMaterial({ color, opacity: 1, transparent: true, side: THREE.DoubleSide, depthTest: false })
     return [
       letters.map(letter => {
-        const geom = new THREE.ShapeGeometry(font.generateShapes(letter, size, 1))
+        const geom = new THREE.ShapeBufferGeometry(font.generateShapes(letter, size, 1))
         geom.computeBoundingBox()
         if (letter === ' ') console.log(geom)
         const mesh = new THREE.Mesh(geom, mat)
+        mesh.renderOrder = 2
+
         mesh.position.x = x
         x += geom.boundingBox.max.x + letterSpacing
         y = Math.max(y, geom.boundingBox.max.y)
@@ -22,7 +24,7 @@ export default function Text({ children, size = 1, letterSpacing = 0.01, color =
       }),
       [x, y]
     ]
-  }, [font, children, size, letterSpacing, color])
+  }, [])
   return (
     <group {...props}>
       <group position={[centerX ? -x / 2 : 0, centerY ? -y / 2 : 0, 0]}>

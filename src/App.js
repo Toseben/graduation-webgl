@@ -10,6 +10,7 @@ import './styles/styles.scss';
 const [useStore, api] = create(set => ({
   // GETTERS
   hovered: null,
+  controls: null,
   reflector: null,
   silhouetteVids: 2,
   loaded: true,
@@ -18,6 +19,7 @@ const [useStore, api] = create(set => ({
 
   // SETTERS
   setHovered: (hovered) => set({ hovered }),
+  setControls: (controls) => set({ controls }),
   setReflector: (reflector) => set({ reflector }),
   setLoaded: (loaded) => set({ loaded }),
   setLoadAnimDone: (loadAnimDone) => set({ loadAnimDone }),

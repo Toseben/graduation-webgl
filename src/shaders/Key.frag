@@ -11,6 +11,7 @@ varying float vHover;
 
 uniform sampler2D map;
 uniform vec2 lum;
+uniform float uHover;
 vec4 lumcoeff = vec4(0.299,0.587,0.114,0.);
 
 void main()
@@ -34,7 +35,7 @@ void main()
 	if (SILHOUETTE) {
 		gl_FragColor = vec4(a.rgb * 0.0, amask * vHover);
 	} else {
-		gl_FragColor = vec4(a.rgb, amask);
+		gl_FragColor = vec4(a.rgb, amask * uHover);
 	}
 	if ( gl_FragColor.a < 0.01 ) discard;
 }

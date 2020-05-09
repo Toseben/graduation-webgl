@@ -6,6 +6,9 @@ import vertexShader from "../shaders/Key.vert";
 import fragmentShader from "../shaders/Key.frag";
 import Text from '../helpers/Text'
 
+import { useSpring, a } from 'react-spring/three'
+import * as easings from 'd3-ease'
+
 const scratchObject3D = new THREE.Object3D();
 const cameraVector3 = new THREE.Vector3();
 function InstacedAvatar({ useStore, vidId, avatars, material }) {
@@ -47,12 +50,17 @@ function InstacedAvatar({ useStore, vidId, avatars, material }) {
     return color
   }, [])
 
+  const spring = useSpring({
+    opacity: hovered ? 1 : 0,
+    config: { duration: 500, easing: easings.easeCubicInOut }
+  }, [])
+
   useFrame(() => {
     if (!meshRef.current) return
 
     const cameraPos = cameraVector3.set(camera.position.x, 0, camera.position.z)
     for (let i = 0; i < avatars.length; ++i) {
-      hoverArray[i] = (hovered && i === hovered.instance && vidId === hovered.vidId) ? Math.max(hoverArray[i] - 0.1, 0) : Math.min(hoverArray[i] + 0.1, 1)
+      hoverArray[i] = (hovered && i === hovered.instance && vidId === hovered.vidId) ? 1 - spring.opacity.value : Math.min(hoverArray[i] + 0.1, 1)
 
       const { x, z } = avatars[i]
       scratchObject3D.position.set(x, 0, z);
@@ -70,7 +78,8 @@ function InstacedAvatar({ useStore, vidId, avatars, material }) {
     if (hovered) {
       if (e.instanceId === hovered.instance && vidId === hovered.vidId) return
     }
-    setHovered({ instance: e.instanceId, vidId, setter: 'hover' })
+
+    if (!window.controls.isRotating) setHovered({ instance: e.instanceId, vidId, setter: 'hover' })
   }
 
   const scale = 0.001
@@ -92,7 +101,6 @@ export default function Avatars({ useStore }) {
   const silhouetteVids = useStore(state => state.silhouetteVids)
   const setLoaded = useStore(state => state.setLoaded)
   const studentData = useStore(state => state.studentData)
-  const hovered = useStore(state => state.hovered)
 
   const radius = 3.75
   const avatarArray = studentData.map((user, idx) => {
@@ -124,6 +132,7 @@ export default function Avatars({ useStore }) {
       const uniforms = Object.assign(THREE.ShaderLib["basic"].uniforms, {
         map: { value: texture },
         lum: { value: new THREE.Vector2(0.0, 0.1) },
+        uHover: { value: 1 },
       });
 
       const material = new THREE.ShaderMaterial({
@@ -142,9 +151,9 @@ export default function Avatars({ useStore }) {
     })
   }, [])
 
-  const cartoonVidMat = useMemo(() => {
+  const cartoonVidUniforms = useMemo(() => {
     const video = document.createElement('video');
-    video.src = `assets/cartoonKey.mp4`;
+    video.src = `assets/cartoonKey_trim.mp4`;
     video.loop = true
     video.muted = true
     video.id = `cartoon-video`
@@ -160,31 +169,22 @@ export default function Avatars({ useStore }) {
     const uniforms = Object.assign(THREE.ShaderLib["basic"].uniforms, {
       map: { value: texture },
       lum: { value: new THREE.Vector2(0.0, 0.1) },
+      uHover: { value: 0 },
     });
 
-    const material = new THREE.ShaderMaterial({
-      uniforms,
-      vertexShader,
-      fragmentShader,
-      transparent: true,
-      side: THREE.DoubleSide
-    })
-
-    return material
-  }, [])
-
-  useEffect(() => {
-    if (!avatarNames.current) return
-    avatarNames.current.children.forEach(avatar => {
-      avatar.lookAt(new THREE.Vector3(0, 0.5, 0))
-      if (avatar.name === 'real-video') {
-        avatar.material = cartoonVidMat
-      }
-    })
+    return uniforms
   }, [])
 
   const scale = 0.000575
-  const hoveredUserId = hovered ? hovered.instance * silhouetteVids + hovered.vidId : null
+  useEffect(() => {
+    if (!avatarNames.current) return
+    avatarNames.current.children.forEach(avatar => {
+      avatar.lookAt(new THREE.Vector3(0, 852 * scale * 0.5, 0))
+    })
+  }, [])
+
+  let maxAvatars = new Array(1).fill()
+
   return (
     <group name="avatarParent">
       <group name="avatarGroup">
@@ -198,15 +198,88 @@ export default function Avatars({ useStore }) {
 
           return (
             <>
-              <Text key={idx} visible={hoveredUserId === idx} color="#fdfdfd" size={0.04} position={[pos.x, -0.05, pos.z]} children={name} />
-              <mesh key={`user-${idx}`} name={`real-video`} visible={hoveredUserId === idx} position={[pos.x, 852 * scale * 0.5, pos.z]}>
-                <planeBufferGeometry attach="geometry" args={[480 * scale, 852 * scale]} />
-                <meshStandardMaterial attach="material" color="hotpink" side={THREE.DoubleSide} />
-              </mesh>
+              {/* <Text key={idx} color="#fdfdfd" size={0.04} position={[pos.x, -0.05, pos.z]} children={name} /> */}
+              {/* <VideoAvatar key={`user-${idx}`} pos={pos} useStore={useStore} /> */}
             </>
           )
         })}
       </group>
+      <group>
+        {maxAvatars.map((pos, idx) => {
+          return (
+            <VideoAvatar key={idx} useStore={useStore} avatarArray={avatarArray} uniforms={cartoonVidUniforms} />
+          )
+        })}
+      </group>
     </group>
+  )
+}
+
+function VideoAvatar({ useStore, avatarArray, uniforms }) {
+  const mesh = useRef(null)
+  const group = useRef(null)
+
+  const hovered = useStore(state => state.hovered)
+  const studentData = useStore(state => state.studentData)
+  const silhouetteVids = useStore(state => state.silhouetteVids)
+
+  const scale = 0.000575
+  const height = 852 * scale * 0.5
+  const lookAt = useMemo(() => new THREE.Vector3(0, height, 0))
+
+  const [data, name] = useMemo(() => {
+    if (!hovered) return [null, null]
+    const hoveredUserId = hovered.instance * silhouetteVids + hovered.vidId
+    const data = avatarArray[hoveredUserId]
+    const name = studentData[hoveredUserId].name.split(' ')[0]
+    return [data, name]
+  }, [hovered])
+
+  useSpring({
+    opacity: hovered ? 1 : 0,
+    config: { duration: 500, easing: easings.easeCubicInOut },
+    onFrame({ opacity }) {
+      if (!mesh.current) return
+      mesh.current.material.uniforms.uHover.value = opacity
+      mesh.current.material.uniforms.uHover.needsUpdate = true
+
+      if (data) {
+        group.current.position.set(
+          data.x * (1 - opacity * 0.2) * 0.99,
+          height,
+          data.z * (1 - opacity * 0.2) * 0.99
+        )
+      } else {
+        const dir = group.current.position.clone().normalize().multiplyScalar(0.025)
+        group.current.position.x += dir.x
+        group.current.position.z += dir.z
+      }
+
+      group.current.lookAt(lookAt)
+    },
+  }, [])
+
+  useEffect(() => {
+    group.current.position.y = -10
+    mesh.current.renderOrder = 1;
+    mesh.current.onBeforeRender = gl => {
+      gl.clearDepth();
+    };
+  }, [])
+
+  return (
+    <a.group ref={group}>
+      <a.mesh
+        ref={mesh}>
+        <planeBufferGeometry attach="geometry" args={[480 * scale, 852 * scale]} />
+        <shaderMaterial
+          attach="material"
+          uniforms={uniforms}
+          vertexShader={vertexShader}
+          fragmentShader={fragmentShader}
+          transparent={true} />
+      </a.mesh>
+      {name && <Text color="#fdfdfd" size={0.04} children={name} position={[0, 0, 0.5]} />}
+    </a.group>
   )
 }
