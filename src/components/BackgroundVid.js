@@ -54,7 +54,7 @@ export default function BackgroundVid({ useStore }) {
       <group ref={mesh}>
         <mesh>
           <planeGeometry attach="geometry" args={[720 * scale, 354 * scale]} />
-          <meshStandardMaterial attach="material" map={particleTex} side={THREE.DoubleSide} />
+          <meshBasicMaterial attach="material" map={particleTex} />
         </mesh>
       </group>
     </group>

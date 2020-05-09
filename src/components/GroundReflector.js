@@ -16,8 +16,8 @@ export default function GroundReflector({ useStore }) {
     const geometry = new THREE.CircleBufferGeometry(6.5, 64);
     const groundMirror = new Reflector(geometry, {
       clipBias: 0.003,
-      textureWidth: 64,
-      textureHeight: 64,
+      textureWidth: 128,
+      textureHeight: 128,
       color: 0x777777,
       map: cementTexture
     });

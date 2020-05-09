@@ -39,9 +39,7 @@ const Graphics = ({ useStore }) => {
         fov: 40 * 1
       }}>
 
-      <ambientLight />
-      <FPS useStore={useStore} />
-
+      {/* <FPS useStore={useStore} /> */}
       <Suspense fallback={null}>
         <Avatars useStore={useStore} />
         <BackgroundVid useStore={useStore} />
