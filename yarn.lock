@@ -5537,6 +5537,11 @@ globule@^1.0.0:
     lodash "~4.17.12"
     minimatch "~3.0.2"
 
+glsl-fast-gaussian-blur@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/glsl-fast-gaussian-blur/-/glsl-fast-gaussian-blur-1.0.2.tgz#95bc77f644a22f06e5ed58e128697f8b17290b08"
+  integrity sha1-lbx39kSiLwbl7VjhKGl/ixcpCwg=
+
 glsl-inject-defines@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/glsl-inject-defines/-/glsl-inject-defines-1.0.3.tgz#dd1aacc2c17fcb2bd3fc32411c6633d0d7b60fd4"
@@ -5550,6 +5555,11 @@ glsl-lut@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/glsl-lut/-/glsl-lut-1.1.1.tgz#3cedc71e670f2a5c4c54890313f672b9f85e7361"
   integrity sha512-FBlEzcGnIK5LYwGKELdkQt7dzQHD/6jndH7+pr0ARsuu9/omAsRX+LqGQ8wOZHoclJezLh4d9eK8Rvntgsuu9A==
+
+glsl-noise@^0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/glsl-noise/-/glsl-noise-0.0.0.tgz#367745f3a33382c0eeec4cb54b7e99cfc1d7670b"
+  integrity sha1-NndF86MzgsDu7Ey1S36Zz8HXZws=
 
 glsl-resolve@0.0.1:
   version "0.0.1"

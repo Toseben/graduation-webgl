@@ -22,6 +22,23 @@ import {
 import vertexShader from "../shaders/Reflector.vert";
 import fragmentShader from "../shaders/Reflector.frag";
 
+function mipmap(size, color) {
+
+  var imageCanvas = document.createElement("canvas"),
+    context = imageCanvas.getContext("2d");
+
+  imageCanvas.width = imageCanvas.height = size;
+
+  context.fillStyle = "#444";
+  context.fillRect(0, 0, size, size);
+
+  context.fillStyle = color;
+  context.fillRect(0, 0, size / 2, size / 2);
+  context.fillRect(size / 2, size / 2, size / 2, size / 2);
+  return imageCanvas;
+
+}
+
 var Reflector = function (geometry, options) {
 
   Mesh.call(this, geometry);
@@ -82,6 +99,7 @@ var Reflector = function (geometry, options) {
   material.uniforms["tDiffuse"].value = renderTarget.texture;
   material.uniforms["color"].value = color;
   material.uniforms["textureMatrix"].value = textureMatrix;
+  material.uniforms["map"].value = options.map;
 
   this.material = material;
 
@@ -227,6 +245,10 @@ Reflector.ReflectorShader = {
     },
 
     'tDiffuse': {
+      value: null
+    },
+
+    'map': {
       value: null
     },
 

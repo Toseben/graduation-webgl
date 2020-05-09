@@ -9,7 +9,9 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "d3-ease": "^1.0.6",
+    "glsl-fast-gaussian-blur": "^1.0.2",
     "glsl-lut": "^1.1.1",
+    "glsl-noise": "^0.0.0",
     "glslify": "^7.0.0",
     "lerp": "^1.0.3",
     "lorem-ipsum": "^2.0.3",

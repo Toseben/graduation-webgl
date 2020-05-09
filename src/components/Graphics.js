@@ -203,7 +203,7 @@ function Avatars({ useStore }) {
   const scale = 0.000575
   const hoveredUserId = hovered ? hovered.instance * silhouetteVids + hovered.vidId : null
   return (
-    <group>
+    <group name="avatarParent">
       <group name="avatarGroup">
         {videoArray.map((video, idx) => {
           return <InstacedAvatar key={idx} useStore={useStore} vidId={idx} avatars={avatarArray.filter((avatar, i) => i % silhouetteVids === idx)} material={video.material} />
@@ -231,15 +231,13 @@ function Avatars({ useStore }) {
 function Background({ useStore }) {
   const group = useRef()
   const mesh = useRef()
-  const reflectorRef = useRef()
-  const setReflector = useStore(state => state.setReflector)
 
   const { gl, scene, camera } = useThree()
   const scale = 0.00525
 
   const particleTex = useMemo(() => {
     const video = document.createElement('video');
-    video.src = `assets/smallParticles.mp4`;
+    video.src = `assets/slowParticles.mp4`;
     video.loop = true
     video.muted = true
     video.id = `video-particles`
@@ -251,32 +249,20 @@ function Background({ useStore }) {
     texture.magFilter = THREE.LinearFilter;
     texture.format = THREE.RGBFormat;
     texture.encoding = THREE.sRGBEncoding;
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+
+    const scaleVid = 0.075;
+    texture.repeat.set(1, 1 - scaleVid * 2)
+    texture.offset.set(0, scaleVid)
+
     return texture
   }, [])
 
-  useFrame(() => {
-    if (!group.current) return
-    if (reflectorRef.current) reflectorRef.current.renderReflector(gl, scene, camera)
-
-    camera.rotation.reorder('YXZ')
-    group.current.rotation.reorder('YXZ')
-    group.current.rotation.y = camera.rotation.y
-  })
-
-  // useEffect(() => {
-  //   const geometry = new THREE.CircleBufferGeometry(5.5, 64);
-  //   const groundMirror = new Reflector(geometry, {
-  //     clipBias: 0.003,
-  //     textureWidth: 256,
-  //     textureHeight: 256,
-  //     color: 0x777777
-  //   });
-
-  //   groundMirror.rotateX(-Math.PI / 2);
-  //   group.current.add(groundMirror);
-
-  //   setReflector(groundMirror)
-  //   reflectorRef.current = groundMirror
+  // useFrame(() => {
+  //   if (!group.current) return
+  //   camera.rotation.reorder('YXZ')
+  //   group.current.rotation.reorder('YXZ')
+  //   group.current.rotation.y = camera.rotation.y
   // })
 
   const windowResize = () => {
@@ -300,7 +286,7 @@ function Background({ useStore }) {
   }, [])
 
   return (
-    <group ref={group}>
+    <group ref={group} name="background">
       <group ref={mesh}>
         <mesh>
           <planeGeometry attach="geometry" args={[720 * scale, 354 * scale]} />
@@ -312,6 +298,36 @@ function Background({ useStore }) {
         </mesh> */}
       </group>
     </group>
+  )
+}
+
+function ReflectorObject({ useStore }) {
+  const reflectorRef = useRef()
+  const setReflector = useStore(state => state.setReflector)
+
+  const { gl, scene, camera } = useThree()
+  const [cementTexture] = useLoader(THREE.TextureLoader, ['assets/cement.jpg'])
+  cementTexture.wrapS = cementTexture.wrapT = THREE.RepeatWrapping;
+
+  useEffect(() => {
+    const geometry = new THREE.CircleBufferGeometry(6.5, 64);
+    const groundMirror = new Reflector(geometry, {
+      clipBias: 0.003,
+      textureWidth: 64,
+      textureHeight: 64,
+      color: 0x777777,
+      map: cementTexture
+    });
+
+    groundMirror.rotateX(-Math.PI / 2);
+    scene.add(groundMirror);
+
+    setReflector(groundMirror)
+    reflectorRef.current = groundMirror
+  })
+
+  return (
+    <></>
   )
 }
 
@@ -347,7 +363,7 @@ const Graphics = ({ useStore }) => {
         gl.outputEncoding = THREE.sRGBEncoding
       }}
       camera={{
-        far: 100, near: 0.01, fov: 40,
+        far: 100, near: 0.01, fov: 40 * 1,
         // position: new THREE.Vector3(0, 1, 10)
       }}>
 
@@ -357,6 +373,7 @@ const Graphics = ({ useStore }) => {
       <Suspense fallback={null}>
         <Avatars useStore={useStore} />
         <Background useStore={useStore} />
+        <ReflectorObject useStore={useStore} />
       </Suspense>
 
       {loaded &&

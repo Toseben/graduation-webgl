@@ -13,6 +13,7 @@ export default function ControlsOrbit({ useStore }) {
   const hovered = useStore(state => state.hovered)
   const loadAnimDone = useStore(state => state.loadAnimDone)
   const setLoadAnimDone = useStore(state => state.setLoadAnimDone)
+  const reflector = useStore(state => state.reflector)
 
   const controls = useRef()
   const { gl, camera, scene } = useThree()
@@ -57,6 +58,7 @@ export default function ControlsOrbit({ useStore }) {
     },
     onRest() {
       setLoadAnimDone(true)
+      if (!controls.current) return
       controls.current.enabled = true
       controls.current.target.set(0, height, -0.0001)
       controls.current.minPolarAngle = Math.PI / 2
@@ -104,7 +106,19 @@ export default function ControlsOrbit({ useStore }) {
 
   useFrame(() => {
     controls.current.update()
+    const background = scene.getObjectByName('background')
+    camera.rotation.reorder('YXZ')
+    background.rotation.reorder('YXZ')
+    background.rotation.y = camera.rotation.y
+
+    if (reflector) {
+      const avatarParent = scene.getObjectByName('avatarParent')
+      if (avatarParent) avatarParent.visible = false
+      reflector.renderReflector(gl, scene, camera)
+      if (avatarParent) avatarParent.visible = true
+    }
   })
+
   return (
     <orbitControls ref={controls} args={[camera, gl.domElement]} enableDamping dampingFactor={0.1} rotateSpeed={-0.5} />
   )

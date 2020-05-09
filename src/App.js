@@ -12,7 +12,7 @@ const [useStore, api] = create(set => ({
   hovered: null,
   reflector: null,
   silhouetteVids: 2,
-  loaded: false,
+  loaded: true,
   loadAnimDone: false,
   studentData: [],
 
