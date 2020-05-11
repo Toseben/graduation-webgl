@@ -57,15 +57,16 @@ video {
 .overlay {
   width: 100vw;
   height: 100vh;
-  pointer-events: none;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 2;
   background: rgba(0, 0, 0, 0.66);
-  transition: background 0.5s ease-in-out;
+  visibility: visible;
+  transition: background 0.5s ease-in-out, visibility 0.5s ease-in-out;
   &.hidden {
     background: rgba(0, 0, 0, 0);
+    visibility: hidden;
   }
 }
 

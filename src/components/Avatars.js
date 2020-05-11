@@ -237,7 +237,6 @@ function VideoAvatar({ useStore, avatarArray, uniforms }) {
     const data = avatarArray[hoveredUserId]
     let name = studentData[hoveredUserId].name
     name = `${name.split(' ')[0]} ${name.split(' ')[1][0]}`
-    console.log(name)
     return [data, name]
   }, [hovered])
 

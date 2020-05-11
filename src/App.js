@@ -13,7 +13,7 @@ const [useStore, api] = create(set => ({
   selected: null,
   controls: null,
   reflector: null,
-  silhouetteVids: 2,
+  silhouetteVids: 3,
   loaded: false,
   loadAnimDone: false,
   studentData: [],
@@ -60,7 +60,7 @@ export default function App() {
   const setStudentData = useStore(state => state.setStudentData)
 
   const [studentData, searchData] = useMemo(() => {
-    let studentData = new Array(25).fill()
+    let studentData = new Array(100).fill()
     let counter = 0
     studentData = studentData.map(user => {
       user = {}
@@ -128,7 +128,7 @@ export default function App() {
           />
         </div>
 
-        <div className={`overlay ${selectedId ? '' : 'hidden'}`}>
+        <div className={`overlay ${selectedId ? '' : 'hidden'}`} onPointerDown={() => setSelected(null)}>
           <div ref={userPlane} className="animateUserInfo" onPointerMove={e => onMouseMove(e)}>
             <div className={`userContainer ${selectedId ? '' : 'hidden'}`} >
               <div className="closeButton" onClick={() => setSelected(null)} />

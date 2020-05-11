@@ -88,6 +88,11 @@ const Graphics = ({ useStore }) => {
         <GroundReflector useStore={useStore} />
       </Suspense>
 
+      {/* <mesh position={[0, 2, 0]}>
+        <sphereGeometry attach="geometry" args={[0.5, 32, 32]} />
+        <meshBasicMaterial attach="material" color="hotpink" transparent />
+      </mesh> */}
+
       {loaded &&
         <ControlsOrbit useStore={useStore} />
       }

@@ -7,7 +7,7 @@ export default function BackgroundVid({ useStore }) {
 
   const particleTex = useMemo(() => {
     const video = document.createElement('video');
-    video.src = `assets/slowParticles.mp4`;
+    video.src = `assets/slowParticles_green.mp4`;
     video.loop = true
     video.muted = true
     video.id = `video-particles`

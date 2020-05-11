@@ -20,16 +20,21 @@ void main() {
 	vec2 unproj2D = vec2 (vUv.s / vUv.q,
 												vUv.t / vUv.q);
 
-	float noise = texture2D(map, vUv2 * 3.0).r * 0.01;
+	float noise = texture2D(map, vUv2 * 3.0).r;
 	float blurSize = 0.01;
 	vec4 base = vec4(0.0);
 	for (int i = 1; i < samples; i++) {
-		base += texture2D(tDiffuse, unproj2D + vec2(0.0, float(i) * -blurSize) + vec2(noise, noise * 10.0));
+		base += texture2D(tDiffuse, unproj2D + vec2(0.0, float(i) * -blurSize) + vec2(noise * 0.01, noise * 10.0 * 0.01));
 	}
 
 	base /= float(samples);
 			
 	// gl_FragColor = vec4( blendOverlay( base.rgb * 1.0, color ), 1.0 );
-	// gl_FragColor.rgb += max(gl_FragColor.rgb, 0.05);
-	gl_FragColor = base;
+	float dist = length(vPosition);
+	gl_FragColor.rgb = max(base.rgb, 0.05);
+	gl_FragColor.rgb += vec3((1.0 - smoothstep(0.0, 8.0, dist)) * noise * 0.1);
+
+	gl_FragColor.a = 1.0;
+	gl_FragColor.a *= 1.0 - smoothstep(4.5, 8.0, dist);
+	// gl_FragColor.rgb = vec3(smoothstep(4.5, 7.5, length(vPosition)));
 }

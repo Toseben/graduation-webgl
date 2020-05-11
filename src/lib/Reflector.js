@@ -93,7 +93,8 @@ var Reflector = function (geometry, options) {
   var material = new ShaderMaterial({
     uniforms: UniformsUtils.clone(shader.uniforms),
     fragmentShader: shader.fragmentShader,
-    vertexShader: shader.vertexShader
+    vertexShader: shader.vertexShader,
+    transparent: true
   });
 
   material.uniforms["tDiffuse"].value = renderTarget.texture;
