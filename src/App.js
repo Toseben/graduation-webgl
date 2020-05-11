@@ -13,7 +13,7 @@ const [useStore, api] = create(set => ({
   controls: null,
   reflector: null,
   silhouetteVids: 2,
-  loaded: true,
+  loaded: false,
   loadAnimDone: false,
   studentData: [],
 
@@ -56,7 +56,7 @@ export default function App() {
   const setStudentData = useStore(state => state.setStudentData)
 
   const [studentData, searchData] = useMemo(() => {
-    let studentData = new Array(100).fill()
+    let studentData = new Array(25).fill()
     let counter = 0
     studentData = studentData.map(user => {
       user = {}
@@ -77,8 +77,8 @@ export default function App() {
 
   const onSelect = record => {
     if (!loadAnimDone) return
-    const instance = record.userId % silhouetteVids
-    const vidId = Math.floor(record.userId / silhouetteVids);
+    const instance = Math.floor(record.userId / silhouetteVids);
+    const vidId = record.userId % silhouetteVids
     setHovered({ instance, vidId, setter: 'search' })
   }
 

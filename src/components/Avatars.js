@@ -192,18 +192,6 @@ export default function Avatars({ useStore }) {
           return <InstacedAvatar key={idx} useStore={useStore} vidId={idx} avatars={avatarArray.filter((avatar, i) => i % silhouetteVids === idx)} material={video.material} />
         })}
       </group>
-      <group ref={avatarNames}>
-        {avatarArray.map((pos, idx) => {
-          const name = studentData[idx].name.split(' ')[0]
-
-          return (
-            <>
-              {/* <Text key={idx} color="#fdfdfd" size={0.04} position={[pos.x, -0.05, pos.z]} children={name} /> */}
-              {/* <VideoAvatar key={`user-${idx}`} pos={pos} useStore={useStore} /> */}
-            </>
-          )
-        })}
-      </group>
       <group>
         {maxAvatars.map((pos, idx) => {
           return (
