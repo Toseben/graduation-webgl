@@ -83,7 +83,7 @@ video {
   overflow: hidden;
   border: solid 1px black;
   width: 75vmin;
-  pointer-events: none;
+  pointer-events: all;
   transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
   transform: scale(1);
   &.hidden {
@@ -100,6 +100,7 @@ video {
     position: absolute;
     top: 0;
     right: 0;
+    z-index: 3;
     border-radius: 10px;
     background-image: url("./assets/close.svg");
     background-size: 50%;
@@ -136,4 +137,9 @@ video {
     font-size: 18px;
     padding: 20px;
   }
+}
+
+.greenScreen {
+  position: absolute;
+  visibility: hidden;
 }

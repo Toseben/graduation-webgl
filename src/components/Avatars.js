@@ -13,6 +13,7 @@ const scratchObject3D = new THREE.Object3D();
 const cameraVector3 = new THREE.Vector3();
 function InstacedAvatar({ useStore, vidId, avatars, material }) {
   const hovered = useStore(state => state.hovered)
+  const selected = useStore(state => state.selected)
   const setHovered = useStore(state => state.setHovered)
   const setSelected = useStore(state => state.setSelected)
   const loadAnimDone = useStore(state => state.loadAnimDone)
@@ -75,12 +76,20 @@ function InstacedAvatar({ useStore, vidId, avatars, material }) {
   })
 
   const onPointerMove = (e) => {
-    if (!loadAnimDone) return
+    if (!loadAnimDone || selected) return
     if (hovered) {
       if (e.instanceId === hovered.instance && vidId === hovered.vidId) return
     }
 
-    if (!window.controls.isRotating) setHovered({ instance: e.instanceId, vidId, setter: 'hover' })
+    if (!window.controls.isRotating) {
+      document.body.style.cursor = 'pointer'
+      setHovered({ instance: e.instanceId, vidId, setter: 'hover' })
+    }
+  }
+
+  const onPointerOut = () => {
+    document.body.style.cursor = 'auto'
+    setHovered(undefined)
   }
 
   const onPointerDown = (e) => {
@@ -91,7 +100,7 @@ function InstacedAvatar({ useStore, vidId, avatars, material }) {
   const scale = 0.001
   return (
     <instancedMesh ref={onRefChange} args={[null, null, avatars.length]} frustumCulled={false}
-      onPointerOver={e => onPointerMove(e)} onPointerOut={e => setHovered(undefined)} 
+      onPointerOver={e => onPointerMove(e)} onPointerOut={() => onPointerOut()} 
       onPointerDown={e => onPointerDown(e)} position={[0, 444 * scale * 0.5, 0]}>
       <planeBufferGeometry attach="geometry" args={[204 * scale, 444 * scale]}>
         <instancedBufferAttribute

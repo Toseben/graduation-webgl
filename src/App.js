@@ -132,9 +132,7 @@ export default function App() {
           <div ref={userPlane} className="animateUserInfo" onPointerMove={e => onMouseMove(e)}>
             <div className={`userContainer ${selectedId ? '' : 'hidden'}`} >
               <div className="closeButton" onClick={() => setSelected(null)} />
-              <video className="videoContainer" autoPlay loop muted>
-                <source type="video/mp4" src="./assets/cartoonKey_trim.mp4"></source>
-              </video>
+              <canvas id="c2" className="videoContainer" width="480" height="852"></canvas>
               <div className={`studentDetails`}>
                 {studentData[selectedId] && <>
                   <p className="name">{studentData[selectedId].name}</p>
@@ -143,6 +141,13 @@ export default function App() {
               </div>
             </div>
           </div>
+        </div>
+
+        <div className='greenScreen'>
+          <canvas id="c1" width="480" height="852"></canvas>
+          <video id="video" autoPlay loop muted>
+            <source type="video/mp4" src="./assets/cartoonKey_trim.mp4"></source>
+          </video>
         </div>
 
         <Graphics useStore={useStore} />
