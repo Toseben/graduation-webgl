@@ -73,7 +73,7 @@ const Graphics = ({ useStore }) => {
 
   return (
     <Canvas
-      gl={{ antialias: false }}
+      gl={{ antialias: true }}
       camera={{
         far: 100, 
         near: 0.01, 

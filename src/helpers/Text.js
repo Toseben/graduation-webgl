@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import React, { useState, useMemo } from 'react'
-import fontFile from './gloria'
+import fontFile from './GothamMedium'
 
 export default function Text({ children, size = 1, letterSpacing = 0.01, color = '#000000', centerX = true, centerY = true, ...props }) {
   const [font] = useState(() => new THREE.FontLoader().parse(fontFile))

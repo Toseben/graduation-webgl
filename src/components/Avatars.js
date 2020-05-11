@@ -235,7 +235,9 @@ function VideoAvatar({ useStore, avatarArray, uniforms }) {
     if (!hovered) return [null, null]
     const hoveredUserId = hovered.instance * silhouetteVids + hovered.vidId
     const data = avatarArray[hoveredUserId]
-    const name = studentData[hoveredUserId].name.split(' ')[0]
+    let name = studentData[hoveredUserId].name
+    name = `${name.split(' ')[0]} ${name.split(' ')[1][0]}`
+    console.log(name)
     return [data, name]
   }, [hovered])
 
@@ -283,7 +285,7 @@ function VideoAvatar({ useStore, avatarArray, uniforms }) {
           fragmentShader={fragmentShader}
           transparent={true} />
       </a.mesh>
-      {name && <Text color="#fdfdfd" size={0.04} children={name} position={[0, 0, 0.5]} />}
+      {name && <Text color="#fdfdfd" size={0.05} children={name} position={[0, -0.25, 0.1]} />}
     </a.group>
   )
 }
