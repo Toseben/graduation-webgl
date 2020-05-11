@@ -115,7 +115,6 @@ function InstacedAvatar({ useStore, vidId, avatars, material }) {
 export default function Avatars({ useStore }) {
   const avatarNames = useRef()
   const silhouetteVids = useStore(state => state.silhouetteVids)
-  const setLoaded = useStore(state => state.setLoaded)
   const studentData = useStore(state => state.studentData)
 
   const radius = 3.75
@@ -162,7 +161,6 @@ export default function Avatars({ useStore }) {
         }
       }).clone()
 
-      setLoaded(true)
       return { video, texture, material }
     })
   }, [])

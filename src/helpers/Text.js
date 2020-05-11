@@ -13,7 +13,6 @@ export default function Text({ children, size = 1, letterSpacing = 0.01, color =
       letters.map(letter => {
         const geom = new THREE.ShapeBufferGeometry(font.generateShapes(letter, size, 1))
         geom.computeBoundingBox()
-        if (letter === ' ') console.log(geom)
         const mesh = new THREE.Mesh(geom, mat)
         mesh.renderOrder = 2
 
