@@ -19,7 +19,7 @@ export default function BackgroundVid({ useStore }) {
     texture.magFilter = THREE.LinearFilter;
     texture.format = THREE.RGBFormat;
     texture.encoding = THREE.sRGBEncoding;
-    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
 
     const scaleVid = 0.075;
     texture.repeat.set(1, 1 - scaleVid * 2)

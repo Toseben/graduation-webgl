@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useEffect, useRef } from 'react'
 import Div100vh from 'react-div-100vh'
 import { LoremIpsum } from "lorem-ipsum";
 import create from 'zustand'
@@ -10,6 +10,7 @@ import './styles/styles.scss';
 const [useStore, api] = create(set => ({
   // GETTERS
   hovered: null,
+  selected: null,
   controls: null,
   reflector: null,
   silhouetteVids: 2,
@@ -19,6 +20,7 @@ const [useStore, api] = create(set => ({
 
   // SETTERS
   setHovered: (hovered) => set({ hovered }),
+  setSelected: (selected) => set({ selected }),
   setControls: (controls) => set({ controls }),
   setReflector: (reflector) => set({ reflector }),
   setLoaded: (loaded) => set({ loaded }),
@@ -50,7 +52,9 @@ const lorem = new LoremIpsum({
 
 export default function App() {
   const hovered = useStore(state => state.hovered)
+  const selected = useStore(state => state.selected)
   const setHovered = useStore(state => state.setHovered)
+  const setSelected = useStore(state => state.setSelected)
   const silhouetteVids = useStore(state => state.silhouetteVids)
   const loadAnimDone = useStore(state => state.loadAnimDone)
   const setStudentData = useStore(state => state.setStudentData)
@@ -86,7 +90,29 @@ export default function App() {
     if (hovered) setHovered(null)
   }
 
-  const nameId = hovered ? hovered.instance * silhouetteVids + hovered.vidId : null
+  const userPlane = useRef(null)
+  const onMouseMove = e => {
+    if (!userPlane.current || !selected) return
+    const YAngle = -(0.5 - (e.pageX / window.innerWidth)) * 20;
+    const XAngle = (0.5 - (e.pageY / window.innerWidth)) * 20;
+
+    const style = `translate(-50%, -50%) rotateX(${XAngle}deg) rotateY(${YAngle}deg)`;
+    const plane = userPlane.current
+    plane.style.transform = style;
+    plane.style.webkitTransform = style;
+    plane.style.mozTranform = style;
+    plane.style.msTransform = style;
+    plane.style.oTransform = style;
+  }
+
+  useEffect(() => {
+    window.addEventListener('mousemove', onMouseMove)
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove)
+    }
+  }, [selected])
+
+  const selectedId = selected ? selected.instance * silhouetteVids + selected.vidId : null
   return (
     <>
       <Div100vh style={{ height: `100rvh` }} className="vis-container">
@@ -102,12 +128,23 @@ export default function App() {
           />
         </div>
 
-        {/* <div className={`studentDetails`}>
-          {studentData[nameId] && <>
-            <p className="name">{studentData[nameId].name}</p>
-            <p className="text">{studentData[nameId].text}</p>
-          </>}
-        </div> */}
+        <div className={`overlay ${selectedId ? '' : 'hidden'}`}>
+          <div ref={userPlane} className="animateUserInfo" onPointerMove={e => onMouseMove(e)}>
+            <div className={`userContainer ${selectedId ? '' : 'hidden'}`} >
+              <div className="closeButton" onClick={() => setSelected(null)} />
+              <video className="videoContainer" autoPlay loop muted>
+                <source type="video/mp4" src="./assets/cartoonKey_trim.mp4"></source>
+              </video>
+              <div className={`studentDetails`}>
+                {studentData[selectedId] && <>
+                  <p className="name">{studentData[selectedId].name}</p>
+                  <p className="text">{studentData[selectedId].text}</p>
+                </>}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <Graphics useStore={useStore} />
       </Div100vh>
     </>

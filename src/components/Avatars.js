@@ -14,6 +14,7 @@ const cameraVector3 = new THREE.Vector3();
 function InstacedAvatar({ useStore, vidId, avatars, material }) {
   const hovered = useStore(state => state.hovered)
   const setHovered = useStore(state => state.setHovered)
+  const setSelected = useStore(state => state.setSelected)
   const loadAnimDone = useStore(state => state.loadAnimDone)
 
   const meshRef = useRef();
@@ -82,10 +83,16 @@ function InstacedAvatar({ useStore, vidId, avatars, material }) {
     if (!window.controls.isRotating) setHovered({ instance: e.instanceId, vidId, setter: 'hover' })
   }
 
+  const onPointerDown = (e) => {
+    if (!loadAnimDone) return
+    if (!window.controls.isRotating) setSelected({ instance: e.instanceId, vidId })
+  }
+
   const scale = 0.001
   return (
     <instancedMesh ref={onRefChange} args={[null, null, avatars.length]} frustumCulled={false}
-      onPointerOver={e => onPointerMove(e)} onPointerOut={e => setHovered(undefined)} position={[0, 444 * scale * 0.5, 0]}>
+      onPointerOver={e => onPointerMove(e)} onPointerOut={e => setHovered(undefined)} 
+      onPointerDown={e => onPointerDown(e)} position={[0, 444 * scale * 0.5, 0]}>
       <planeBufferGeometry attach="geometry" args={[204 * scale, 444 * scale]}>
         <instancedBufferAttribute
           attachObject={['attributes', 'hover']}
