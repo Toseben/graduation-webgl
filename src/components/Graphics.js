@@ -7,6 +7,7 @@ import BackgroundVid from "./BackgroundVid"
 import ControlsOrbit from "./ControlsOrbit"
 import GroundReflector from "./GroundReflector"
 import Galaxy from "./Galaxy"
+import Particles from './Particles'
 
 function FPS({ useStore }) {
   const stats = useRef()
@@ -71,6 +72,7 @@ function ChromaKey({ useStore }) {
 
 const Graphics = ({ useStore }) => {
   const loaded = useStore(state => state.loaded)
+  const mouse = useRef([0, 0])
 
   return (
     <Canvas
@@ -82,6 +84,8 @@ const Graphics = ({ useStore }) => {
       }}>
 
       {/* <FPS useStore={useStore} /> */}
+
+      <Particles count={2000} mouse={mouse} />
       <ChromaKey useStore={useStore} />
       <Suspense fallback={null}>
         <Avatars useStore={useStore} />
