@@ -6,6 +6,7 @@ import Avatars from "./Avatars"
 import BackgroundVid from "./BackgroundVid"
 import ControlsOrbit from "./ControlsOrbit"
 import GroundReflector from "./GroundReflector"
+import Galaxy from "./Galaxy"
 
 function FPS({ useStore }) {
   const stats = useRef()
@@ -75,8 +76,8 @@ const Graphics = ({ useStore }) => {
     <Canvas
       gl={{ antialias: true }}
       camera={{
-        far: 100, 
-        near: 0.01, 
+        far: 10000, 
+        near: 0.1, 
         fov: 40 * 1
       }}>
 
@@ -86,6 +87,7 @@ const Graphics = ({ useStore }) => {
         <Avatars useStore={useStore} />
         <BackgroundVid useStore={useStore} />
         <GroundReflector useStore={useStore} />
+        <Galaxy useStore={useStore} />
       </Suspense>
 
       {loaded &&

@@ -34,16 +34,18 @@ export default function ControlsOrbit({ useStore }) {
   const height = 0.5
   useSpring({
     from: {
-      camPos: [0, 10, 15],
+      camPos: [0, 10 * 250, 15 * 250],
       camTarget: [0, height, 0],
+      size: 1,
     },
     to: {
       camPos: [0, height, 0],
       camTarget: [0, height, -10],
+      size: 0,
     },
-    config: { duration: 2000, easing: easings.easeSinOut },
+    config: { duration: 5000, easing: easings.easeSinOut },
     delay: 1000,
-    onFrame({ camPos, camTarget }) {
+    onFrame({ camPos, camTarget, size }) {
       if (loadAnimDone) return
       camera.position.set(
         camPos[0],
@@ -56,6 +58,14 @@ export default function ControlsOrbit({ useStore }) {
         camTarget[1],
         camTarget[2]
       )
+
+      const galaxy = scene.getObjectByName('galaxy')
+      if (!galaxy) return
+      galaxy.traverse(child => {
+        if (child instanceof THREE.Points) {
+          child.material.size = Math.pow(size, 0.75) * 28 + 2
+        }
+      })
     },
     onRest() {
       if (loadAnimDone) return
@@ -121,10 +131,10 @@ export default function ControlsOrbit({ useStore }) {
     background.rotation.y = camera.rotation.y
 
     if (reflector) {
-      const avatarParent = scene.getObjectByName('avatarParent')
-      // if (avatarParent) avatarParent.visible = false
+      const galaxy = scene.getObjectByName('galaxy')
+      if (galaxy) galaxy.visible = false
       reflector.renderReflector(gl, scene, camera)
-      // if (avatarParent) avatarParent.visible = true
+      if (galaxy) galaxy.visible = true
     }
   })
 
