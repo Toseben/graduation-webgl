@@ -149,7 +149,7 @@ video {
 }
 
 .searchBox {
-  z-index: 10;
+  z-index: 2;
   position: absolute;
   width: 300px;
   right: 0;
@@ -157,10 +157,27 @@ video {
   * {
     text-align: center;
   }
+  input {
+    background: rgba(0, 0, 0, 0.25);
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.25);
+    border: solid 1px black;
+    color: white;
+    &::placeholder {
+      color: white;
+    }
+  }
+}
+
+.react-search-box-dropdown {
+  background: rgba(0, 0, 0, 0) !important;
 }
 
 .react-search-box-dropdown ul li {
   display: inherit !important;
+  background: rgba(0, 0, 0, 0.25) !important;
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.25);
+  border: solid 1px black !important;
+  color: white;
 }
 
 .react-search-box-dropdown ul li:nth-child(1n + 6) {
@@ -171,15 +188,13 @@ video {
   border-radius: 5px;
 }
 
-
 .fireworksContainer {
   width: 50%;
   height: 100%;
   position: absolute;
   box-shadow: 0 0 40px rgba(255, 255, 255, 0.25);
-  border-radius: 10px;
-  // overflow: hidden;
   border: solid 1px black;
+  border-radius: 10px;
 }
 
 .fireworks {
