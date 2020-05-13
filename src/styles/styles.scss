@@ -28,7 +28,7 @@
 body {
   margin: 0;
   overflow: hidden;
-  background: hsl(0, 0%, 0%);
+  background: hsl(0, 0%, 25%);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -83,7 +83,7 @@ video {
   background: rgba(0, 0, 0, 0.25);
   box-shadow: 0 0 40px rgba(255, 255, 255, 0.25);
   border-radius: 10px;
-  overflow: hidden;
+  // overflow: hidden;
   border: solid 1px black;
   width: 75vmin;
   pointer-events: all;
@@ -95,6 +95,7 @@ video {
   }
   .videoContainer {
     width: 50%;
+    z-index: 2;
   }
   .closeButton {
     width: 50px;
@@ -168,4 +169,22 @@ video {
 
 .react-search-box-dropdown ul li:nth-child(5) {
   border-radius: 5px;
+}
+
+
+.fireworksContainer {
+  width: 50%;
+  height: 100%;
+  position: absolute;
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  // overflow: hidden;
+  border: solid 1px black;
+}
+
+.fireworks {
+  display: block;
+  min-width: 100%;
+  min-height: 100%;
+  object-fit: cover;
 }

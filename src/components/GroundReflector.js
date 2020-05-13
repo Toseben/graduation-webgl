@@ -22,8 +22,9 @@ export default function GroundReflector({ useStore }) {
       map: cementTexture
     });
 
+    groundMirror.renderOrder = 1
     groundMirror.rotateX(-Math.PI / 2);
-    scene.add(groundMirror);
+    // scene.add(groundMirror);
 
     setReflector(groundMirror)
     reflectorRef.current = groundMirror

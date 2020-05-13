@@ -8,6 +8,7 @@ import ControlsOrbit from "./ControlsOrbit"
 import GroundReflector from "./GroundReflector"
 import Galaxy from "./Galaxy"
 import Particles from './Particles'
+import BackgroundParticles from "./BackgroundParticles"
 
 function FPS({ useStore }) {
   const stats = useRef()
@@ -80,18 +81,20 @@ const Graphics = ({ useStore }) => {
       camera={{
         far: 10000, 
         near: 0.1, 
-        fov: 40 * 1
+        fov: 40 * 1,
+        position: [0, 10 * 250, 15 * 250]
       }}>
 
       {/* <FPS useStore={useStore} /> */}
 
-      <Particles count={2000} mouse={mouse} />
       <ChromaKey useStore={useStore} />
       <Suspense fallback={null}>
         <Avatars useStore={useStore} />
-        <BackgroundVid useStore={useStore} />
+        {/* <BackgroundVid useStore={useStore} /> */}
         <GroundReflector useStore={useStore} />
+        <BackgroundParticles useStore={useStore} />
         <Galaxy useStore={useStore} />
+        <Particles count={2000} mouse={mouse} />
       </Suspense>
 
       {loaded &&

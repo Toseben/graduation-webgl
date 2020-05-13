@@ -16,7 +16,8 @@ import {
   UniformsUtils,
   Vector3,
   Vector4,
-  WebGLRenderTarget
+  WebGLRenderTarget,
+  DoubleSide
 } from "three";
 
 import vertexShader from "../shaders/Reflector.vert";

@@ -8,6 +8,12 @@ import * as easings from 'd3-ease'
 const dummyMatrix = new THREE.Matrix4();
 const dummyVector = new THREE.Vector3();
 
+const smoothstep = (lowerBound, upperBound, value) => {
+  var clippedValue = value > upperBound ? upperBound : value < lowerBound ? lowerBound : value;
+  var normalizedValue = (clippedValue - lowerBound) / (upperBound - lowerBound);
+  return normalizedValue * normalizedValue * (3 - 2 * normalizedValue);
+}
+
 extend({ OrbitControls })
 export default function ControlsOrbit({ useStore }) {
   const hovered = useStore(state => state.hovered)
@@ -31,7 +37,7 @@ export default function ControlsOrbit({ useStore }) {
     return dummyVector
   }, [hovered])
 
-  const height = 0.5
+  const height = 1.246
   useSpring({
     from: {
       camPos: [0, 10 * 250, 15 * 250],
@@ -39,11 +45,11 @@ export default function ControlsOrbit({ useStore }) {
       size: 1,
     },
     to: {
-      camPos: [0, height, 0],
-      camTarget: [0, height, -10],
+      camPos: [0, height, 10],
+      camTarget: [0, 0, 0],
       size: 0,
     },
-    config: { duration: 5000, easing: easings.easeSinOut },
+    config: { duration: 750, easing: easings.easeSinOut },
     delay: 1000,
     onFrame({ camPos, camTarget, size }) {
       if (loadAnimDone) return
@@ -63,18 +69,33 @@ export default function ControlsOrbit({ useStore }) {
       if (!galaxy) return
       galaxy.traverse(child => {
         if (child instanceof THREE.Points) {
-          child.material.size = Math.pow(size, 0.75) * 28 + 2
+          child.material.size = Math.pow(size, 0.75) * 30
+        }
+      })
+
+      const backgroundParticles = scene.getObjectByName('backgroundParticles')
+      if (!backgroundParticles) return
+      backgroundParticles.traverse(child => {
+        if (child instanceof THREE.Points) {
+          child.material.opacity = (1 - smoothstep(0.0, 0.1, size)) * 0.1
         }
       })
     },
     onRest() {
       if (loadAnimDone) return
       setLoadAnimDone(true)
+      const galaxy = scene.getObjectByName('galaxy')
+      galaxy.traverse(child => {
+        if (child instanceof THREE.Points) {
+          child.visible = false
+        }
+      })
+
       if (!controls.current) return
       controls.current.enabled = true
-      controls.current.target.set(0, height, -0.0001)
-      controls.current.minPolarAngle = Math.PI / 2
-      controls.current.maxPolarAngle = Math.PI / 2
+      controls.current.maxPolarAngle = Math.PI / 2 - 0.125
+      controls.current.minPolarAngle = 1
+      controls.current.maxDistance = 10
     }
   }, [])
 
@@ -121,24 +142,22 @@ export default function ControlsOrbit({ useStore }) {
   const prevRotation = useRef()
   useFrame(() => {
     controls.current.update()
-    // console.log(Math.abs(prevRotation.current - camera.rotation.y) < 0.00025)
     controls.current.isRotating = Math.abs(prevRotation.current - camera.rotation.y) > 0.0005
     prevRotation.current = camera.rotation.y
 
     const background = scene.getObjectByName('background')
     camera.rotation.reorder('YXZ')
-    background.rotation.reorder('YXZ')
-    background.rotation.y = camera.rotation.y
-
+    if (background) {
+      background.rotation.reorder('YXZ')
+      background.rotation.y = camera.rotation.y
+    }
+    
     if (reflector) {
-      const galaxy = scene.getObjectByName('galaxy')
-      if (galaxy) galaxy.visible = false
       reflector.renderReflector(gl, scene, camera)
-      if (galaxy) galaxy.visible = true
     }
   })
 
   return (
-    <orbitControls ref={controls} args={[camera, gl.domElement]} enableDamping dampingFactor={0.1} rotateSpeed={-0.5} />
+    <orbitControls ref={controls} args={[camera, gl.domElement]} enableDamping dampingFactor={0.1} rotateSpeed={0.5} />
   )
 }

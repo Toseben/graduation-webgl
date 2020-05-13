@@ -100,7 +100,7 @@ function InstacedAvatar({ useStore, vidId, avatars, material }) {
   const scale = 0.001
   return (
     <instancedMesh ref={onRefChange} args={[null, null, avatars.length]} frustumCulled={false}
-      onPointerOver={e => onPointerMove(e)} onPointerOut={() => onPointerOut()} 
+      onPointerOver={e => onPointerMove(e)} onPointerOut={() => onPointerOut()} renderOrder={2}
       onPointerDown={e => onPointerDown(e)} position={[0, 444 * scale * 0.5, 0]}>
       <planeBufferGeometry attach="geometry" args={[204 * scale, 444 * scale]}>
         <instancedBufferAttribute
@@ -248,17 +248,18 @@ function VideoAvatar({ useStore, avatarArray, uniforms }) {
 
       if (data) {
         group.current.position.set(
-          data.x * (1 - opacity * 0.2) * 0.99,
+          data.x * (1 + opacity * 0.1) * 1.01,
           height,
-          data.z * (1 - opacity * 0.2) * 0.99
+          data.z * (1 + opacity * 0.1) * 1.01
         )
       } else {
         const dir = group.current.position.clone().normalize().multiplyScalar(0.025)
-        group.current.position.x += dir.x
-        group.current.position.z += dir.z
+        group.current.position.x -= dir.x
+        group.current.position.z -= dir.z
       }
 
       group.current.lookAt(lookAt)
+      group.current.rotation.y += Math.PI
     },
   }, [])
 

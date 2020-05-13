@@ -130,7 +130,12 @@ export default function App() {
 
         <div className={`overlay ${selectedId ? '' : 'hidden'}`} onPointerDown={() => setSelected(null)}>
           <div ref={userPlane} className="animateUserInfo" onPointerMove={e => onMouseMove(e)}>
-            <div className={`userContainer ${selectedId ? '' : 'hidden'}`} >
+            <div className={`userContainer ${selectedId ? '' : 'hidden'}`}>
+              <div className="fireworksContainer">
+                <video className="fireworks" autoPlay loop muted>
+                <source type="video/mp4" src="./assets/fireworksBlack.mp4"></source>
+              </video>
+              </div>
               <div className="closeButton" onClick={() => setSelected(null)} />
               <canvas id="c2" className="videoContainer" width="480" height="852"></canvas>
               <div className={`studentDetails`}>
