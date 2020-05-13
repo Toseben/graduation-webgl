@@ -88,7 +88,7 @@ function InstacedAvatar({ useStore, vidId, avatars, material }) {
       if (instances.includes(e.instanceId) && vidIds.includes(vidId)) return
     }
 
-    if (!window.controls.isRotating) {
+    if (!window.controls.isRotating && !window.middleMouseDown) {
       document.body.style.cursor = 'pointer'
       setHovered({ array: [{ instance: e.instanceId, vidId }], setter: 'hover' })
     }

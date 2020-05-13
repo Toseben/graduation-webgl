@@ -86,9 +86,9 @@ export default function ControlsOrbit({ useStore }) {
     onRest() {
       if (loadAnimDone) return
       setLoadAnimDone(true)
-      setTimeout(() => {
+      // setTimeout(() => {
         setHovered({ array: [{ instance: 0, vidId: 0 }], setter: 'search' })
-      }, 1000)
+      // }, 1000)
 
       if (!controls.current) return
       controls.current.enabled = true
@@ -114,7 +114,7 @@ export default function ControlsOrbit({ useStore }) {
     to: {
       firstTarget: orbitTarget ? [orbitTarget.x, height * 0.5, orbitTarget.z] : [camera.position.x, camera.position.y, camera.position.z],
     },
-    config: { duration: 2500, easing: easings.easeCubicInOut },
+    config: { duration: 2500, easing: easings.easeSineInOut },
     onFrame({ firstTarget }) {
       if (!hovered || hovered.setter === 'hover') return
       camera.position.set(
@@ -133,7 +133,7 @@ export default function ControlsOrbit({ useStore }) {
     controls.current.enabled = false
     controls.current.mouseButtons = {
       LEFT: THREE.MOUSE.ROTATE,
-      MIDDLE: null,
+      MIDDLE: THREE.MOUSE.DOLLY,
       RIGHT: null
     }
   }, [])

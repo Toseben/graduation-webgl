@@ -128,9 +128,21 @@ export default function App() {
     plane.style.oTransform = style;
   }
 
+  const onMouseUp = e => {
+    if (e.button === 1) window.middleMouseDown = false
+  }
+
+  const onMouseDown = e => {
+    if (e.button === 1) window.middleMouseDown = true
+  }
+
   useEffect(() => {
+    window.addEventListener('mouseup', onMouseUp)
+    window.addEventListener('mousedown', onMouseDown)
     window.addEventListener('mousemove', onMouseMove)
     return () => {
+      window.removeEventListener('mouseup', onMouseUp)
+      window.removeEventListener('mousedown', onMouseDown)
       window.removeEventListener('mousemove', onMouseMove)
     }
   }, [selected])
