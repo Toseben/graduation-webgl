@@ -13,22 +13,22 @@ export default function GroundReflector({ useStore }) {
   cementTexture.wrapS = cementTexture.wrapT = THREE.RepeatWrapping;
 
   useEffect(() => {
-    const geometry = new THREE.CircleBufferGeometry(8, 64);
+    const geometry = new THREE.CircleBufferGeometry(10, 64);
     const groundMirror = new Reflector(geometry, {
       clipBias: 0.003,
-      textureWidth: 128,
-      textureHeight: 128,
+      textureWidth: 256,
+      textureHeight: 256,
       color: 0xffffff,
       map: cementTexture
     });
 
     groundMirror.renderOrder = 1
     groundMirror.rotateX(-Math.PI / 2);
-    // scene.add(groundMirror);
+    scene.add(groundMirror);
 
     setReflector(groundMirror)
     reflectorRef.current = groundMirror
-  })
+  }, [])
 
   return (
     <></>

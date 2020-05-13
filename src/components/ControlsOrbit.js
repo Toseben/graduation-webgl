@@ -21,6 +21,7 @@ export default function ControlsOrbit({ useStore }) {
   const setLoadAnimDone = useStore(state => state.setLoadAnimDone)
   const reflector = useStore(state => state.reflector)
   const setControls = useStore(state => state.setControls)
+  const setHovered = useStore(state => state.setHovered)
 
   const controls = useRef()
   const { gl, camera, scene } = useThree()
@@ -29,27 +30,28 @@ export default function ControlsOrbit({ useStore }) {
     return scene.getObjectByName('avatarGroup')
   }, [])
 
-  // const orbitTarget = useMemo(() => {
-  //   if (!hovered) return null
-  //   const avatar = avatarGroup.children[hovered.vidId]
-  //   avatar.getMatrixAt(hovered.instance, dummyMatrix)
-  //   dummyVector.setFromMatrixPosition(dummyMatrix).normalize().multiplyScalar(0.0001)
-  //   return dummyVector
-  // }, [hovered])
+  const orbitTarget = useMemo(() => {
+    if (!hovered) return null
+    const center = parseInt(hovered.array.length / 2)
+    const avatar = avatarGroup.children[hovered.array[center].vidId]
+    avatar.getMatrixAt(hovered.array[center].instance, dummyMatrix)
+    dummyVector.setFromMatrixPosition(dummyMatrix).normalize().multiply(new THREE.Vector3(-0.25, 1, -0.25))
+    return dummyVector
+  }, [hovered])
 
-  const height = 1.246
+  const height = 0.75
   useSpring({
     from: {
-      camPos: [0, 10 * 250, 15 * 250],
+      camPos: [0, 10 * 250, -15 * 250],
       camTarget: [0, height, 0],
       size: 1,
     },
     to: {
-      camPos: [0, height, 10],
-      camTarget: [0, 0, 0],
+      camPos: [0, height, -10],
+      camTarget: [0, height * 0.5, 0],
       size: 0,
     },
-    config: { duration: 750, easing: easings.easeSinOut },
+    config: { duration: 7500, easing: easings.easeSinOut },
     delay: 1000,
     onFrame({ camPos, camTarget, size }) {
       if (loadAnimDone) return
@@ -69,7 +71,7 @@ export default function ControlsOrbit({ useStore }) {
       if (!galaxy) return
       galaxy.traverse(child => {
         if (child instanceof THREE.Points) {
-          child.material.size = Math.pow(size, 0.75) * 30
+          child.material.size = Math.pow(size, 0.75) * 30 + 0.5
         }
       })
 
@@ -77,24 +79,21 @@ export default function ControlsOrbit({ useStore }) {
       if (!backgroundParticles) return
       backgroundParticles.traverse(child => {
         if (child instanceof THREE.Points) {
-          child.material.opacity = (1 - smoothstep(0.0, 0.1, size)) * 0.1
+          child.material.uniforms.scale.value = 1.0 - smoothstep(0.0, 0.1, size)
         }
       })
     },
     onRest() {
       if (loadAnimDone) return
       setLoadAnimDone(true)
-      const galaxy = scene.getObjectByName('galaxy')
-      galaxy.traverse(child => {
-        if (child instanceof THREE.Points) {
-          child.visible = false
-        }
-      })
+      setTimeout(() => {
+        setHovered({ array: [{ instance: 0, vidId: 0 }], setter: 'search' })
+      }, 1000)
 
       if (!controls.current) return
       controls.current.enabled = true
-      controls.current.maxPolarAngle = Math.PI / 2 - 0.125
-      controls.current.minPolarAngle = 1
+      controls.current.maxPolarAngle = Math.PI / 2 - 0.025
+      controls.current.minPolarAngle = 1.25
       controls.current.maxDistance = 10
     }
   }, [])
@@ -102,30 +101,29 @@ export default function ControlsOrbit({ useStore }) {
   useEffect(() => {
     if (!firstTarget) return
     if (!hovered) return
-    const targetArray = controls.current.target.toArray()
+    const targetArray = camera.position.toArray()
     firstTarget.payload.forEach((target, idx) => {
       target.setValue(targetArray[idx])
     })
   }, [hovered])
 
-  const firstTarget = false
-  // const { firstTarget } = useSpring({
-  //   from: {
-  //     firstTarget: controls.current ? [controls.current.target.x, height, controls.current.target.z] : [0, height, -0.0001],
-  //   },
-  //   to: {
-  //     firstTarget: orbitTarget ? [orbitTarget.x, height, orbitTarget.z] : [0, height, -0.0001],
-  //   },
-  //   config: { duration: 2500, easing: easings.easeCubicInOut },
-  //   onFrame({ firstTarget }) {
-  //     if (!hovered || hovered.setter === 'hover') return
-  //     controls.current.target.set(
-  //       firstTarget[0],
-  //       firstTarget[1],
-  //       firstTarget[2]
-  //     )
-  //   }
-  // }, [])
+  const { firstTarget } = useSpring({
+    from: {
+      firstTarget: [camera.position.x, camera.position.y, camera.position.z],
+    },
+    to: {
+      firstTarget: orbitTarget ? [orbitTarget.x, height * 0.5, orbitTarget.z] : [camera.position.x, camera.position.y, camera.position.z],
+    },
+    config: { duration: 2500, easing: easings.easeCubicInOut },
+    onFrame({ firstTarget }) {
+      if (!hovered || hovered.setter === 'hover') return
+      camera.position.set(
+        firstTarget[0],
+        firstTarget[1],
+        firstTarget[2]
+      )
+    }
+  }, [])
 
   useEffect(() => {
     controls.current.isRotating = false
@@ -152,13 +150,14 @@ export default function ControlsOrbit({ useStore }) {
       background.rotation.reorder('YXZ')
       background.rotation.y = camera.rotation.y
     }
-    
+
+    const backgroundParticles = scene.getObjectByName('backgroundParticles')
     if (reflector) {
-      reflector.renderReflector(gl, scene, camera)
+      reflector.renderReflector(gl, scene, camera, backgroundParticles)
     }
   })
 
   return (
-    <orbitControls ref={controls} args={[camera, gl.domElement]} enableDamping dampingFactor={0.1} rotateSpeed={0.5} />
+    <orbitControls ref={controls} args={[camera, gl.domElement]} enableDamping dampingFactor={0.1} rotateSpeed={-0.5} />
   )
 }

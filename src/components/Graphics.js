@@ -81,8 +81,8 @@ const Graphics = ({ useStore }) => {
       camera={{
         far: 10000, 
         near: 0.1, 
-        fov: 40 * 1,
-        position: [0, 10 * 250, 15 * 250]
+        fov: 30,
+        position: [0, 10 * 250, -15 * 250]
       }}>
 
       {/* <FPS useStore={useStore} /> */}
@@ -90,11 +90,11 @@ const Graphics = ({ useStore }) => {
       <ChromaKey useStore={useStore} />
       <Suspense fallback={null}>
         <Avatars useStore={useStore} />
-        {/* <BackgroundVid useStore={useStore} /> */}
+        <BackgroundVid useStore={useStore} />
         <GroundReflector useStore={useStore} />
         <BackgroundParticles useStore={useStore} />
         <Galaxy useStore={useStore} />
-        <Particles count={2000} mouse={mouse} />
+        {/* <Particles count={2000} mouse={mouse} /> */}
       </Suspense>
 
       {loaded &&

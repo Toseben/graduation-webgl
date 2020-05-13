@@ -26,6 +26,7 @@
     "react-three-gui": "^0.1.5",
     "stats.js": "^0.17.0",
     "three": "0.115.0",
+    "tinygradient": "^1.1.2",
     "zustand": "^2.2.3"
   },
   "browserslist": [

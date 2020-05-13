@@ -5,44 +5,44 @@ import { useSpring, a } from 'react-spring/three'
 
 export default function BackgroundVid({ useStore }) {
   const group = useRef()
-  const mesh = useRef()
-  const setLoaded = useStore(state => state.setLoaded)
+  // const mesh = useRef()
+  // const setLoaded = useStore(state => state.setLoaded)
 
-  const particleTex = useMemo(() => {
-    const video = document.createElement('video');
-    video.src = `assets/slowParticles_green.mp4`;
-    video.loop = true
-    video.muted = true
-    video.id = `video-particles`
-    video.load();
-    video.play();
+  // const particleTex = useMemo(() => {
+  //   const video = document.createElement('video');
+  //   video.src = `assets/slowParticles_green.mp4`;
+  //   video.loop = true
+  //   video.muted = true
+  //   video.id = `video-particles`
+  //   video.load();
+  //   video.play();
 
-    const texture = new THREE.VideoTexture(video);
-    texture.minFilter = THREE.LinearFilter;
-    texture.magFilter = THREE.LinearFilter;
-    texture.format = THREE.RGBFormat;
-    texture.encoding = THREE.sRGBEncoding;
-    texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
+  //   const texture = new THREE.VideoTexture(video);
+  //   texture.minFilter = THREE.LinearFilter;
+  //   texture.magFilter = THREE.LinearFilter;
+  //   texture.format = THREE.RGBFormat;
+  //   texture.encoding = THREE.sRGBEncoding;
+  //   texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
 
-    const scaleVid = 0.075;
-    texture.repeat.set(1, 1 - scaleVid * 2)
-    texture.offset.set(0, scaleVid)
+  //   const scaleVid = 0.075;
+  //   texture.repeat.set(1, 1 - scaleVid * 2)
+  //   texture.offset.set(0, scaleVid)
 
-    return texture
-  }, [])
+  //   return texture
+  // }, [])
 
-  const scale = 0.00525
-  const windowResize = () => {
-    const aspect = window.innerWidth / window.innerHeight;
-    if (aspect > 1) {
-      mesh.current.scale.set(aspect, aspect, aspect)
-      mesh.current.position.set(0, 354 * scale * aspect * 0.5, -5)
-    } else {
-      const staticScale = 1.25
-      mesh.current.scale.set(staticScale, staticScale, staticScale)
-      mesh.current.position.set(0, 354 * scale * staticScale * 0.5, -5)
-    }
-  }
+  // const scale = 0.00525
+  // const windowResize = () => {
+  //   const aspect = window.innerWidth / window.innerHeight;
+  //   if (aspect > 1) {
+  //     mesh.current.scale.set(aspect, aspect, aspect)
+  //     mesh.current.position.set(0, 354 * scale * aspect * 0.5, -5)
+  //   } else {
+  //     const staticScale = 1.25
+  //     mesh.current.scale.set(staticScale, staticScale, staticScale)
+  //     mesh.current.position.set(0, 354 * scale * staticScale * 0.5, -5)
+  //   }
+  // }
 
   const calc = (x, y) => [(x - window.innerWidth / 2), (y - window.innerHeight / 2) * -1]
   const [props, set] = useSpring(() => ({ xy: [0, 0], config: { mass: 10, tension: 550, friction: 140 } }))
@@ -52,12 +52,12 @@ export default function BackgroundVid({ useStore }) {
   }
 
   useEffect(() => {
-    windowResize()
-    window.addEventListener('resize', windowResize)
+    // windowResize()
+    // window.addEventListener('resize', windowResize)
     window.addEventListener('mousemove', onMouseMove)
-    setLoaded(true)
+    // setLoaded(true)
     return () => {
-      window.removeEventListener('resize', windowResize)
+      // window.removeEventListener('resize', windowResize)
       window.removeEventListener('mousemove', onMouseMove)
     }
   }, [])
@@ -75,12 +75,12 @@ export default function BackgroundVid({ useStore }) {
         <meshBasicMaterial attach="material"/>
       </a.mesh>
 
-      <group ref={mesh}>
+      {/* <group ref={mesh}>
         <mesh>
           <planeBufferGeometry attach="geometry" args={[720 * scale, 354 * scale]} />
           <meshBasicMaterial attach="material" map={particleTex} />
         </mesh>
-      </group>
+      </group> */}
     </group>
   )
 }

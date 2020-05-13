@@ -95,7 +95,8 @@ var Reflector = function (geometry, options) {
     uniforms: UniformsUtils.clone(shader.uniforms),
     fragmentShader: shader.fragmentShader,
     vertexShader: shader.vertexShader,
-    transparent: true
+    transparent: true,
+    // side: DoubleSide
   });
 
   material.uniforms["tDiffuse"].value = renderTarget.texture;
@@ -105,7 +106,7 @@ var Reflector = function (geometry, options) {
 
   this.material = material;
 
-  this.renderReflector = function (renderer, scene, camera) {
+  this.renderReflector = function (renderer, scene, camera, particles) {
 
     if ('recursion' in camera.userData) {
 
@@ -206,7 +207,9 @@ var Reflector = function (geometry, options) {
     renderer.state.buffers.depth.setMask(true); // make sure the depth buffer is writable so it can be properly cleared, see #18897
 
     if (renderer.autoClear === false) renderer.clear();
+    particles.material.size = 5.0
     renderer.render(scene, virtualCamera);
+    particles.material.size = 20.0
 
     renderer.xr.enabled = currentXrEnabled;
     renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;

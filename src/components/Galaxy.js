@@ -7,6 +7,7 @@ export default function Galaxy({ useStore }) {
   const galaxyGltf = useLoader(GLTFLoader, 'assets/galaxy.glb')
   const galaxy = useRef()
   const spin = useRef()
+  const loadAnimDone = useStore(state => state.loadAnimDone)
 
   const modelCenter = useMemo(() => {
     const box = new THREE.Box3();
@@ -33,7 +34,7 @@ export default function Galaxy({ useStore }) {
 
   useFrame(() => {
     if (!spin.current) return
-    spin.current.rotation.y += 0.0025
+    spin.current.rotation.y += loadAnimDone ? 0.00025 : 0.0025
   })
 
   return (

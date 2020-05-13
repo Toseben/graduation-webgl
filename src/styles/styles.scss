@@ -28,7 +28,7 @@
 body {
   margin: 0;
   overflow: hidden;
-  background: hsl(0, 0%, 25%);
+  background: hsl(0, 0%, 7.5%);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -158,8 +158,8 @@ video {
     text-align: center;
   }
   input {
-    background: rgba(0, 0, 0, 0.25);
-    box-shadow: 0 0 40px rgba(255, 255, 255, 0.25);
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.75);
     border: solid 1px black;
     color: white;
     &::placeholder {
@@ -175,12 +175,12 @@ video {
 
 .react-search-box-dropdown {
   background: rgba(0, 0, 0, 0) !important;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.75) !important;
 }
 
 .react-search-box-dropdown ul li {
   display: inherit !important;
-  background: rgba(0, 0, 0, 0.25) !important;
-  box-shadow: 0 0 40px rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.5) !important;
   border: solid 1px black !important;
   color: white;
 }

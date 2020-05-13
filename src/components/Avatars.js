@@ -85,7 +85,7 @@ function InstacedAvatar({ useStore, vidId, avatars, material }) {
   const onPointerMove = (e) => {
     if (!loadAnimDone || selected) return
     if (hovered) {
-      if (e.instanceId === hovered.instance && vidId === hovered.vidId) return
+      if (instances.includes(e.instanceId) && vidIds.includes(vidId)) return
     }
 
     if (!window.controls.isRotating) {
@@ -250,48 +250,52 @@ function VideoAvatar({ useStore, index, avatarArray, uniforms }) {
     config: { duration: 500, easing: easings.easeCubicInOut },
     onFrame({ opacity }) {
       if (!mesh.current) return
-      mesh.current.material.uniforms.uHover.value = opacity
-      mesh.current.material.uniforms.uHover.needsUpdate = true
+
+      if (mesh.current.material.uniforms) {
+        mesh.current.material.uniforms.uHover.value = opacity
+        mesh.current.material.uniforms.uHover.needsUpdate = true
+      }
 
       if (data) {
         group.current.position.set(
-          data.x * (1 + opacity * 0.1) * 1.01,
+          data.x * (1 - opacity * 0.1) * 0.99,
           height,
-          data.z * (1 + opacity * 0.1) * 1.01
+          data.z * (1 - opacity * 0.1) * 0.99
         )
       } else {
         const dir = group.current.position.clone().normalize().multiplyScalar(0.025)
-        group.current.position.x -= dir.x
-        group.current.position.z -= dir.z
+        group.current.position.x += dir.x
+        group.current.position.z += dir.z
       }
 
       group.current.lookAt(lookAt)
-      group.current.rotation.y += Math.PI
+      // group.current.rotation.y += Math.PI
     },
   }, [])
 
   useEffect(() => {
     group.current.position.y = -10
-    mesh.current.renderOrder = 1;
+    mesh.current.renderOrder = 3;
     mesh.current.onBeforeRender = gl => {
       gl.clearDepth();
     };
+
+    mesh.current.material = new THREE.ShaderMaterial({
+      uniforms: Object.assign({}, uniforms),
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader,
+      side: THREE.DoubleSide,
+      transparent: true
+    }).clone()
   }, [])
 
   return (
-    <a.group ref={group}>
-      <a.mesh
+    <group ref={group}>
+      <mesh
         ref={mesh}>
         <planeBufferGeometry attach="geometry" args={[480 * scale, 852 * scale]} />
-        <shaderMaterial
-          attach="material"
-          uniforms={uniforms}
-          vertexShader={vertexShader}
-          fragmentShader={fragmentShader}
-          side={THREE.DoubleSide}
-          transparent={true} />
-      </a.mesh>
-      {name && <Text color="#fdfdfd" size={0.025} children={name} position={[0, -0.25, 0.1]} />}
-    </a.group>
+      </mesh>
+      {name && <Text color="#fdfdfd" size={0.02} children={name} position={[0, -0.25, 0.1]} />}
+    </group>
   )
 }
