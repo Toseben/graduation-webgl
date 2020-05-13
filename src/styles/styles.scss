@@ -148,7 +148,7 @@ video {
   visibility: hidden;
 }
 
-.searchBox {
+.searchBox, .tagBox {
   z-index: 2;
   position: absolute;
   width: 300px;
@@ -166,6 +166,11 @@ video {
       color: white;
     }
   }
+}
+
+.tagBox {
+  right: auto;
+  left: 0;
 }
 
 .react-search-box-dropdown {

@@ -57,12 +57,19 @@ function InstacedAvatar({ useStore, vidId, avatars, material }) {
     config: { duration: 500, easing: easings.easeCubicInOut }
   }, [])
 
+  const [instances, vidIds] = useMemo(() => {
+    if (!hovered) return [null, null]
+    const instances = hovered.array.map(o => o.instance)
+    const vidIds = hovered.array.map(o => o.vidId)
+    return [instances, vidIds]
+  }, [hovered])
+
   useFrame(() => {
     if (!meshRef.current) return
 
     const cameraPos = cameraVector3.set(camera.position.x, 0, camera.position.z)
     for (let i = 0; i < avatars.length; ++i) {
-      hoverArray[i] = (hovered && i === hovered.instance && vidId === hovered.vidId) ? 1 - spring.opacity.value : Math.min(hoverArray[i] + 0.1, 1)
+      hoverArray[i] = (hovered && instances.includes(i) && vidIds.includes(vidId)) ? 1 - spring.opacity.value : Math.min(hoverArray[i] + 0.1, 1)
 
       const { x, z } = avatars[i]
       scratchObject3D.position.set(x, 0, z);
@@ -83,7 +90,7 @@ function InstacedAvatar({ useStore, vidId, avatars, material }) {
 
     if (!window.controls.isRotating) {
       document.body.style.cursor = 'pointer'
-      setHovered({ instance: e.instanceId, vidId, setter: 'hover' })
+      setHovered({ array: [{ instance: e.instanceId, vidId }], setter: 'hover' })
     }
   }
 
@@ -175,8 +182,8 @@ export default function Avatars({ useStore }) {
     video.play()
 
     const texture = new THREE.VideoTexture(video);
-    texture.minFilter = THREE.LinearFilter;
-    texture.magFilter = THREE.LinearFilter;
+    // texture.minFilter = THREE.LinearFilter;
+    // texture.magFilter = THREE.LinearFilter;
     texture.format = THREE.RGBFormat;
     texture.encoding = THREE.sRGBEncoding;
 
@@ -197,7 +204,7 @@ export default function Avatars({ useStore }) {
     })
   }, [])
 
-  let maxAvatars = new Array(1).fill()
+  let maxAvatars = new Array(20).fill()
 
   return (
     <group name="avatarParent">
@@ -209,7 +216,7 @@ export default function Avatars({ useStore }) {
       <group>
         {maxAvatars.map((pos, idx) => {
           return (
-            <VideoAvatar key={idx} useStore={useStore} avatarArray={avatarArray} uniforms={cartoonVidUniforms} />
+            <VideoAvatar key={idx} useStore={useStore} index={idx} avatarArray={avatarArray} uniforms={cartoonVidUniforms} />
           )
         })}
       </group>
@@ -217,7 +224,7 @@ export default function Avatars({ useStore }) {
   )
 }
 
-function VideoAvatar({ useStore, avatarArray, uniforms }) {
+function VideoAvatar({ useStore, index, avatarArray, uniforms }) {
   const mesh = useRef(null)
   const group = useRef(null)
 
@@ -229,17 +236,17 @@ function VideoAvatar({ useStore, avatarArray, uniforms }) {
   const height = 852 * scale * 0.5
   const lookAt = useMemo(() => new THREE.Vector3(0, height, 0))
 
-  const [data, name] = useMemo(() => {
-    if (!hovered) return [null, null]
-    const hoveredUserId = hovered.instance * silhouetteVids + hovered.vidId
+  const [data, name, visible] = useMemo(() => {
+    if (!hovered || !hovered.array[index]) return [null, null, false]
+    const hoveredUserId = hovered.array[index].instance * silhouetteVids + hovered.array[index].vidId
     const data = avatarArray[hoveredUserId]
     let name = studentData[hoveredUserId].name
     name = `${name.split(' ')[0]} ${name.split(' ')[1][0]}`
-    return [data, name]
+    return [data, name, true]
   }, [hovered])
 
   useSpring({
-    opacity: hovered ? 1 : 0,
+    opacity: visible ? 1 : 0,
     config: { duration: 500, easing: easings.easeCubicInOut },
     onFrame({ opacity }) {
       if (!mesh.current) return
@@ -281,9 +288,10 @@ function VideoAvatar({ useStore, avatarArray, uniforms }) {
           uniforms={uniforms}
           vertexShader={vertexShader}
           fragmentShader={fragmentShader}
+          side={THREE.DoubleSide}
           transparent={true} />
       </a.mesh>
-      {name && <Text color="#fdfdfd" size={0.05} children={name} position={[0, -0.25, 0.1]} />}
+      {name && <Text color="#fdfdfd" size={0.025} children={name} position={[0, -0.25, 0.1]} />}
     </a.group>
   )
 }

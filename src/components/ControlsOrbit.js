@@ -29,13 +29,13 @@ export default function ControlsOrbit({ useStore }) {
     return scene.getObjectByName('avatarGroup')
   }, [])
 
-  const orbitTarget = useMemo(() => {
-    if (!hovered) return null
-    const avatar = avatarGroup.children[hovered.vidId]
-    avatar.getMatrixAt(hovered.instance, dummyMatrix)
-    dummyVector.setFromMatrixPosition(dummyMatrix).normalize().multiplyScalar(0.0001)
-    return dummyVector
-  }, [hovered])
+  // const orbitTarget = useMemo(() => {
+  //   if (!hovered) return null
+  //   const avatar = avatarGroup.children[hovered.vidId]
+  //   avatar.getMatrixAt(hovered.instance, dummyMatrix)
+  //   dummyVector.setFromMatrixPosition(dummyMatrix).normalize().multiplyScalar(0.0001)
+  //   return dummyVector
+  // }, [hovered])
 
   const height = 1.246
   useSpring({
@@ -108,23 +108,24 @@ export default function ControlsOrbit({ useStore }) {
     })
   }, [hovered])
 
-  const { firstTarget } = useSpring({
-    from: {
-      firstTarget: controls.current ? [controls.current.target.x, height, controls.current.target.z] : [0, height, -0.0001],
-    },
-    to: {
-      firstTarget: orbitTarget ? [orbitTarget.x, height, orbitTarget.z] : [0, height, -0.0001],
-    },
-    config: { duration: 2500, easing: easings.easeCubicInOut },
-    onFrame({ firstTarget }) {
-      if (!hovered || hovered.setter === 'hover') return
-      controls.current.target.set(
-        firstTarget[0],
-        firstTarget[1],
-        firstTarget[2]
-      )
-    }
-  }, [])
+  const firstTarget = false
+  // const { firstTarget } = useSpring({
+  //   from: {
+  //     firstTarget: controls.current ? [controls.current.target.x, height, controls.current.target.z] : [0, height, -0.0001],
+  //   },
+  //   to: {
+  //     firstTarget: orbitTarget ? [orbitTarget.x, height, orbitTarget.z] : [0, height, -0.0001],
+  //   },
+  //   config: { duration: 2500, easing: easings.easeCubicInOut },
+  //   onFrame({ firstTarget }) {
+  //     if (!hovered || hovered.setter === 'hover') return
+  //     controls.current.target.set(
+  //       firstTarget[0],
+  //       firstTarget[1],
+  //       firstTarget[2]
+  //     )
+  //   }
+  // }, [])
 
   useEffect(() => {
     controls.current.isRotating = false

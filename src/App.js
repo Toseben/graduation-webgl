@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useRef } from 'react'
+import React, { useMemo, useEffect, useRef, useState } from 'react'
 import Div100vh from 'react-div-100vh'
 import { LoremIpsum } from "lorem-ipsum";
 import create from 'zustand'
@@ -67,6 +67,9 @@ export default function App() {
       user.userId = counter
       user.name = generateName()
       user.text = lorem.generateSentences(2)
+      user.tags = []
+      if (counter < 20) user.tags = ['First']
+      if (counter < 10) user.tags = ['First', 'Honors']
       counter++
       return user
     })
@@ -79,11 +82,31 @@ export default function App() {
     return [studentData, searchData]
   }, [])
 
+  const tagData = useMemo(() => {
+    const tagData = [
+      { value: ' Honors' },
+      { value: ' First' }
+    ]
+    return tagData
+  }, [])
+
   const onSelect = record => {
     if (!loadAnimDone) return
     const instance = Math.floor(record.userId / silhouetteVids);
     const vidId = record.userId % silhouetteVids
-    setHovered({ instance, vidId, setter: 'search' })
+    setHovered({ array: [{ instance, vidId }], setter: 'search' })
+  }
+
+  const onSelectFilter = record => {
+    if (!loadAnimDone) return
+    let filtered = studentData.filter(student => student.tags.includes(record.value.trim()))
+    filtered = filtered.map(student => {
+      const instance = Math.floor(student.userId / silhouetteVids);
+      const vidId = student.userId % silhouetteVids
+      return { instance, vidId }
+    })
+
+    setHovered({ array: filtered, setter: 'search' })
   }
 
   const onChange = () => {
@@ -113,6 +136,8 @@ export default function App() {
   }, [selected])
 
   const selectedId = selected ? selected.instance * silhouetteVids + selected.vidId : null
+  const tagBox = useRef()
+
   return (
     <>
       <Div100vh style={{ height: `100rvh` }} className="vis-container">
@@ -128,13 +153,25 @@ export default function App() {
           />
         </div>
 
+        <div className="tagBox">
+          <ReactSearchBox
+            ref={tagBox}
+            placeholder="Press space to filter"
+            data={tagData}
+            onSelect={record => onSelectFilter(record)}
+            fuseConfigs={{
+              threshold: 0.05,
+            }}
+          />
+        </div>
+
         <div className={`overlay ${selectedId ? '' : 'hidden'}`} onPointerDown={() => setSelected(null)}>
           <div ref={userPlane} className="animateUserInfo" onPointerMove={e => onMouseMove(e)}>
             <div className={`userContainer ${selectedId ? '' : 'hidden'}`}>
               <div className="fireworksContainer">
                 <video className="fireworks" autoPlay loop muted>
-                <source type="video/mp4" src="./assets/fireworksBlack.mp4"></source>
-              </video>
+                  <source type="video/mp4" src="./assets/fireworksBlack.mp4"></source>
+                </video>
               </div>
               <div className="closeButton" onClick={() => setSelected(null)} />
               <canvas id="c2" className="videoContainer" width="480" height="852"></canvas>
