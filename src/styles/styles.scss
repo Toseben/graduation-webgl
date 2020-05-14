@@ -1,11 +1,7 @@
 @font-face {
   font-family: Gotham-Medium;
   src: url("./assets/Gotham-Medium.otf");
-}
-
-@font-face {
-  font-family: Gotham-Black;
-  src: url("./assets/Gotham-Black.otf");
+  font-display: swap;
 }
 
 * {
@@ -120,7 +116,6 @@ video {
 .studentDetails {
   color: white;
   width: 50%;
-  align-items: center;
   display: flex;
   flex-direction: column;
   text-align: center;
@@ -136,7 +131,8 @@ video {
   }
 }
 
-.markdownVideo, .markdownImage {
+.markdownVideo,
+.markdownImage {
   margin-top: 20px;
   width: 100%;
 }
@@ -146,7 +142,8 @@ video {
   visibility: hidden;
 }
 
-.searchBox, .tagBox {
+.searchBox,
+.tagBox {
   z-index: 2;
   position: absolute;
   width: 300px;
@@ -205,4 +202,84 @@ video {
   min-width: 100%;
   min-height: 100%;
   object-fit: cover;
+}
+
+// LOADER
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.loadingScreen {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  z-index: 100;
+  background: hsl(0, 0%, 7.5%);
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  &.hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+  .topBar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    .loading {
+      font-size: 24px;
+      span {
+        animation-name: blink;
+        animation-duration: 1.4s;
+        animation-iteration-count: infinite;
+        animation-fill-mode: both;
+      }
+      span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+    }
+  }
+  .universityLogo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    .logo {
+      width: 25vmin;
+      height: 25vmin;
+      background-image: url("./assets/helmet.svg");
+      background-size: 75%;
+      background-position: center;
+      background-repeat: no-repeat;
+      margin: 20px;
+    }
+    .commencement {
+      font-family: sans-serif;
+      font-weight: 100;
+      letter-spacing: 1.5px;
+    }
+  }
+}
+
+* {
+  stroke: #aaa;
+  stroke-width: 10;
 }

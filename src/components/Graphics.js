@@ -3,11 +3,10 @@ import { Canvas, useFrame } from 'react-three-fiber';
 import Stats from 'stats.js'
 
 import Avatars from "./Avatars"
-import BackgroundVid from "./BackgroundVid"
+import FollowLight from "./FollowLight"
 import ControlsOrbit from "./ControlsOrbit"
 import GroundReflector from "./GroundReflector"
 import Galaxy from "./Galaxy"
-import Particles from './Particles'
 import BackgroundParticles from "./BackgroundParticles"
 
 function FPS({ useStore }) {
@@ -73,7 +72,6 @@ function ChromaKey({ useStore }) {
 
 const Graphics = ({ useStore }) => {
   const loaded = useStore(state => state.loaded)
-  const mouse = useRef([0, 0])
 
   return (
     <Canvas
@@ -90,11 +88,10 @@ const Graphics = ({ useStore }) => {
       <ChromaKey useStore={useStore} />
       <Suspense fallback={null}>
         <Avatars useStore={useStore} />
-        <BackgroundVid useStore={useStore} />
+        <FollowLight useStore={useStore} />
         <GroundReflector useStore={useStore} />
         <BackgroundParticles useStore={useStore} />
         <Galaxy useStore={useStore} />
-        {/* <Particles count={2000} mouse={mouse} /> */}
       </Suspense>
 
       {loaded &&

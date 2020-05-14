@@ -10,6 +10,7 @@ const markdownText = require("./markdownText.md");
 
 const [useStore, api] = create(set => ({
   // GETTERS
+  progress: 0,
   hovered: null,
   selected: null,
   controls: null,
@@ -20,6 +21,7 @@ const [useStore, api] = create(set => ({
   studentData: [],
 
   // SETTERS
+  setProgress: (progress) => set({ progress }),
   setHovered: (hovered) => set({ hovered }),
   setSelected: (selected) => set({ selected }),
   setControls: (controls) => set({ controls }),
@@ -41,6 +43,8 @@ function generateName() {
 }
 
 export default function App() {
+  const loaded = useStore(state => state.loaded)
+  const progress = useStore(state => state.progress)
   const hovered = useStore(state => state.hovered)
   const selected = useStore(state => state.selected)
   const setHovered = useStore(state => state.setHovered)
@@ -135,11 +139,23 @@ export default function App() {
   const selectedId = selected ? selected.instance * silhouetteVids + selected.vidId : null
   const tagBox = useRef()
 
-  const onPointerDown = e => { e.stopPropagation()}
+  const onPointerDown = e => { e.stopPropagation() }
 
   return (
     <>
       <Div100vh style={{ height: `100rvh` }} className="vis-container">
+        <div className={`loadingScreen ${loaded ? 'hidden' : ''}`}>
+          <div className="topBar">
+            <p className="loading">LOADING<span>.</span><span>.</span><span>.</span></p>
+            <p className="university">MICHIGAN STATE UNIVERSITY</p>
+          </div>
+          <div className="universityLogo">
+            <div className="logo"></div>
+            <p className="college">LYMAN BRIGGS COLLEGE</p>
+            <p className="commencement">- Commencement 2020 -</p>
+          </div>
+        </div>
+
         <div className="searchBox">
           <ReactSearchBox
             placeholder="Search for a name"
@@ -173,7 +189,7 @@ export default function App() {
                 </video>
               </div>
               <canvas id="c2" className="videoContainer" width="480" height="852"></canvas>
-              <div className="closeButton" onClick={() => setSelected(null)}/>
+              <div className="closeButton" onClick={() => setSelected(null)} />
               <div className={`studentDetails`}>
                 {studentData[selectedId] &&
                   <div className="text" dangerouslySetInnerHTML={{ __html: studentData[selectedId].markdown }}></div>

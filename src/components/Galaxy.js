@@ -4,10 +4,23 @@ import { useLoader, useFrame } from "react-three-fiber"
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 export default function Galaxy({ useStore }) {
-  const galaxyGltf = useLoader(GLTFLoader, 'assets/galaxy.glb')
+  const loadAnimDone = useStore(state => state.loadAnimDone)
+  const setProgress = useStore(state => state.setProgress)
+
   const galaxy = useRef()
   const spin = useRef()
-  const loadAnimDone = useStore(state => state.loadAnimDone)
+
+  const galaxyGltf = useLoader(GLTFLoader, 'assets/galaxy.glb', loader => {
+    loader.manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+      setProgress(parseInt(itemsLoaded / itemsTotal * 100));
+    };
+  })
+
+  const starTexture = useLoader(THREE.TextureLoader, 'assets/lensflare.png', loader => {
+    loader.manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+      setProgress(parseInt(itemsLoaded / itemsTotal * 100));
+    };
+  })
 
   const modelCenter = useMemo(() => {
     const box = new THREE.Box3();
@@ -17,7 +30,6 @@ export default function Galaxy({ useStore }) {
     return modelCenter
   }, [])
 
-  const starTexture = useLoader(THREE.TextureLoader, 'assets/lensflare.png')
   useEffect(() => {
     galaxy.current.traverse(child => {
       if (child instanceof THREE.Points) {

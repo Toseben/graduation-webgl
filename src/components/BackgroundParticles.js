@@ -31,13 +31,32 @@ void main() {
 export default function BackgroundParticles({ useStore }) {
   const background = useRef()
   const setLoaded = useStore(state => state.setLoaded)
-  const backgroundGltf = useLoader(GLTFLoader, 'assets/background_v001.glb')
+  const setProgress = useStore(state => state.setProgress)
 
-  useEffect(() => {
-    setLoaded(true)
-  }, [])
+  const backgroundGltf = useLoader(GLTFLoader, 'assets/background_v001.glb', loader => {
+    loader.manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+      setProgress(parseInt(itemsLoaded / itemsTotal * 100));
+    };
 
-  const circleTex = useLoader(THREE.TextureLoader, 'assets/whiteCircle.png')
+    loader.manager.onLoad = function () {
+      setTimeout(() => {
+        setLoaded(true)
+      }, 500)
+    };
+  })
+
+  const circleTex = useLoader(THREE.TextureLoader, 'assets/whiteCircle.png', loader => {
+    loader.manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+      setProgress(parseInt(itemsLoaded / itemsTotal * 100));
+    };
+
+    loader.manager.onLoad = function () {
+      setTimeout(() => {
+        setLoaded(true)
+      }, 500)
+    };
+  })
+
   const points = useMemo(() => {
     const geometry = new THREE.BufferGeometry();
     const colorAttribute = backgroundGltf.__$[1].geometry.attributes.color.clone()
@@ -45,7 +64,7 @@ export default function BackgroundParticles({ useStore }) {
     const sizes = new Float32Array(colorArray.length / 3);
 
     for (let i = 0; i < colorArray.length; i = i + 3) {
-      const sample = colorArray[i] 
+      const sample = colorArray[i]
       const color = gradient[parseInt(sample * gradient.length)]
       colorArray[i] = color['_r'] / 255
       colorArray[i + 1] = color['_g'] / 255
@@ -56,12 +75,12 @@ export default function BackgroundParticles({ useStore }) {
     geometry.setAttribute('position', backgroundGltf.__$[1].geometry.attributes.position);
     geometry.setAttribute('color', colorAttribute);
     geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-    let material = new THREE.PointsMaterial({ 
-      size: 20.0, 
-      vertexColors: true, 
-      opacity: 0.75, 
-      map: circleTex, 
-      transparent: true, 
+    let material = new THREE.PointsMaterial({
+      size: 20.0,
+      vertexColors: true,
+      opacity: 0.75,
+      map: circleTex,
+      transparent: true,
       sizeAttenuation: false,
       alphaTest: 0.25,
       // blending: THREE.AdditiveBlending,
@@ -75,12 +94,12 @@ export default function BackgroundParticles({ useStore }) {
       },
       vertexShader,
       fragmentShader,
-      vertexColors: true, 
+      vertexColors: true,
       transparent: true,
       blending: THREE.AdditiveBlending,
     });
 
-    const points =  new THREE.Points(geometry, material);
+    const points = new THREE.Points(geometry, material);
     return points
   }, [])
 

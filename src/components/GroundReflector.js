@@ -7,9 +7,15 @@ import { Reflector } from '../lib/Reflector.js';
 export default function GroundReflector({ useStore }) {
   const reflectorRef = useRef()
   const setReflector = useStore(state => state.setReflector)
+  const setProgress = useStore(state => state.setProgress)
 
   const { scene } = useThree()
-  const [cementTexture] = useLoader(THREE.TextureLoader, ['assets/cement.jpg'])
+  const [cementTexture] = useLoader(THREE.TextureLoader, ['assets/cement.jpg'], loader => {
+    loader.manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+      setProgress(parseInt(itemsLoaded / itemsTotal * 100));
+    };
+  })
+
   cementTexture.wrapS = cementTexture.wrapT = THREE.RepeatWrapping;
 
   useEffect(() => {
