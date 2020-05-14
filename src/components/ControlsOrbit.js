@@ -51,7 +51,7 @@ export default function ControlsOrbit({ useStore }) {
       camTarget: [0, height * 0.5, 0],
       size: 0,
     },
-    config: { duration: 7500, easing: easings.easeSinOut },
+    config: { duration: 7500 * 0.1, easing: easings.easeSinOut },
     delay: 1000,
     onFrame({ camPos, camTarget, size }) {
       if (loadAnimDone) return

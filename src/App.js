@@ -1,11 +1,12 @@
 import React, { useMemo, useEffect, useRef, useState } from 'react'
 import Div100vh from 'react-div-100vh'
-import { LoremIpsum } from "lorem-ipsum";
 import create from 'zustand'
 import ReactSearchBox from 'react-search-box'
+import marked from 'marked';
 
 import Graphics from './components/Graphics';
 import './styles/styles.scss';
+const markdownText = require("./markdownText.md");
 
 const [useStore, api] = create(set => ({
   // GETTERS
@@ -39,17 +40,6 @@ function generateName() {
   return name;
 }
 
-const lorem = new LoremIpsum({
-  sentencesPerParagraph: {
-    max: 8,
-    min: 4
-  },
-  wordsPerSentence: {
-    max: 16,
-    min: 4
-  }
-});
-
 export default function App() {
   const hovered = useStore(state => state.hovered)
   const selected = useStore(state => state.selected)
@@ -66,7 +56,7 @@ export default function App() {
       user = {}
       user.userId = counter
       user.name = generateName()
-      user.text = lorem.generateSentences(2)
+      user.markdown = marked(`# ${user.name}\n\n${markdownText}`)
       user.tags = []
       if (counter < 20) user.tags = ['First']
       if (counter < 10) user.tags = ['First', 'Honors']
@@ -150,6 +140,10 @@ export default function App() {
   const selectedId = selected ? selected.instance * silhouetteVids + selected.vidId : null
   const tagBox = useRef()
 
+  const onPointerDown = e => {
+    e.stopPropagation();
+  }
+
   return (
     <>
       <Div100vh style={{ height: `100rvh` }} className="vis-container">
@@ -178,20 +172,19 @@ export default function App() {
         </div>
 
         <div className={`overlay ${selectedId ? '' : 'hidden'}`} onPointerDown={() => setSelected(null)}>
-          <div ref={userPlane} className="animateUserInfo" onPointerMove={e => onMouseMove(e)}>
+          <div ref={userPlane} className="animateUserInfo" onPointerMove={e => onMouseMove(e)} onPointerDown={e => onPointerDown(e)}>
             <div className={`userContainer ${selectedId ? '' : 'hidden'}`}>
               <div className="fireworksContainer">
                 <video className="fireworks" autoPlay loop muted>
                   <source type="video/mp4" src="./assets/fireworksBlack.mp4"></source>
                 </video>
               </div>
-              <div className="closeButton" onClick={() => setSelected(null)} />
               <canvas id="c2" className="videoContainer" width="480" height="852"></canvas>
+              <div className="closeButton" onClick={() => setSelected(null)}/>
               <div className={`studentDetails`}>
-                {studentData[selectedId] && <>
-                  <p className="name">{studentData[selectedId].name}</p>
-                  <p className="text">{studentData[selectedId].text}</p>
-                </>}
+                {studentData[selectedId] &&
+                  <div className="text" dangerouslySetInnerHTML={{ __html: studentData[selectedId].markdown }}></div>
+                }
               </div>
             </div>
           </div>
