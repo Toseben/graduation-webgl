@@ -150,7 +150,13 @@ export default function App() {
             <p className="university">MICHIGAN STATE UNIVERSITY</p>
           </div>
           <div className="universityLogo">
-            <div className="logo"></div>
+            <div className="logoContainer">
+              <div className="logo" />
+              <div className="logoWhite" 
+                style={{
+                  height: progress,
+                }}/>
+            </div>
             <p className="college">LYMAN BRIGGS COLLEGE</p>
             <p className="commencement">- Commencement 2020 -</p>
           </div>

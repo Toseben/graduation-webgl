@@ -1,6 +1,6 @@
 import * as THREE from 'three'
-import React, { useMemo, useRef, useEffect } from 'react'
-import { useLoader, useThree } from "react-three-fiber"
+import React, { useMemo, useRef } from 'react'
+import { useLoader } from "react-three-fiber"
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import tinygradient from 'tinygradient'
 const hoursColors = tinygradient(['#18453B', '#0DB14B', '#94AE4A', '#D1DE3F', '#008183', '#63005F'])
