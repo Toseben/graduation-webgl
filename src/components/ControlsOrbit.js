@@ -31,7 +31,7 @@ export default function ControlsOrbit({ useStore }) {
   }, [])
 
   const orbitTarget = useMemo(() => {
-    if (!hovered) return null
+    if (!hovered || !avatarGroup) return null
     const center = parseInt(hovered.array.length / 2)
     const avatar = avatarGroup.children[hovered.array[center].vidId]
     avatar.getMatrixAt(hovered.array[center].instance, dummyMatrix)
@@ -51,7 +51,7 @@ export default function ControlsOrbit({ useStore }) {
       camTarget: [0, height * 0.5, 0],
       size: 0,
     },
-    config: { duration: 7500 * 0.1, easing: easings.easeSinOut },
+    config: { duration: 7500 * 1, easing: easings.easeSinOut },
     delay: 1000,
     onFrame({ camPos, camTarget, size }) {
       if (loadAnimDone) return

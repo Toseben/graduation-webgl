@@ -207,9 +207,9 @@ var Reflector = function (geometry, options) {
     renderer.state.buffers.depth.setMask(true); // make sure the depth buffer is writable so it can be properly cleared, see #18897
 
     if (renderer.autoClear === false) renderer.clear();
-    particles.material.size = 5.0
+    if (particles) particles.material.size = 5.0
     renderer.render(scene, virtualCamera);
-    particles.material.size = 20.0
+    if (particles) particles.material.size = 20.0
 
     renderer.xr.enabled = currentXrEnabled;
     renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;

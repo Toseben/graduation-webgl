@@ -166,6 +166,42 @@ video {
 .tagBox {
   right: auto;
   left: 0;
+  width: 260px;
+  .dropbtn {
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 260px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.75);
+    border-radius: 5px;
+  }
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    width: 100%;
+    margin-top: 10px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.75);
+    border-radius: 5px;
+    a {
+      border-radius: 5px;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      height: 40px;
+      line-height: 40px;
+      border: solid 1px black;
+      display: block;
+      cursor: pointer;
+      &:hover {
+        background: rgba(#18453B, 0.5);
+      }
+    }
+  }
+}
+
+.tagBox:hover .dropdown-content {
+  display: block;
 }
 
 .react-search-box-dropdown {
@@ -178,6 +214,9 @@ video {
   background: rgba(0, 0, 0, 0.5) !important;
   border: solid 1px black !important;
   color: white;
+  &:hover {
+    background: rgba(#18453B, 0.5) !important;
+  }
 }
 
 .react-search-box-dropdown ul li:nth-child(1n + 6) {
@@ -265,12 +304,12 @@ video {
     .logoContainer {
       width: 25vmin;
       height: 25vmin;
-      // outline: solid red 1px;
       position: relative;
-      .logo, .logoWhite {
+      .logo,
+      .logoWhite {
         width: 100%;
         height: 100%;
-        background-image: url("./assets/helmet.svg");
+        background-image: url("./assets/helmetWhite.svg");
         background-size: 85%;
         background-position: center bottom;
         background-repeat: no-repeat;
@@ -278,11 +317,10 @@ video {
         margin-bottom: 20px;
         bottom: 0;
       }
-      .logoWhite {
-        background-image: url("./assets/helmetWhite.svg");
-        height: 0;
+      .logo {
+        background-image: url("./assets/helmet.svg");
         z-index: 2;
-        transition: height 0.5s linear;
+        height: 0;
       }
     }
 

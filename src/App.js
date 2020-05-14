@@ -3,6 +3,8 @@ import Div100vh from 'react-div-100vh'
 import create from 'zustand'
 import ReactSearchBox from 'react-search-box'
 import marked from 'marked';
+import { useSpring, animated } from 'react-spring'
+import * as easings from 'd3-ease'
 
 import Graphics from './components/Graphics';
 import './styles/styles.scss';
@@ -47,11 +49,20 @@ export default function App() {
   const progress = useStore(state => state.progress)
   const hovered = useStore(state => state.hovered)
   const selected = useStore(state => state.selected)
+  const setLoaded = useStore(state => state.setLoaded)
   const setHovered = useStore(state => state.setHovered)
   const setSelected = useStore(state => state.setSelected)
   const silhouetteVids = useStore(state => state.silhouetteVids)
   const loadAnimDone = useStore(state => state.loadAnimDone)
   const setStudentData = useStore(state => state.setStudentData)
+
+  useEffect(() => {
+    if (progress === 100) {
+      setTimeout(() => {
+        setLoaded(true)
+      }, 2500)
+    }
+  }, [progress])
 
   const [studentData, searchData] = useMemo(() => {
     let studentData = new Array(100).fill()
@@ -137,9 +148,11 @@ export default function App() {
   }, [selected])
 
   const selectedId = selected ? selected.instance * silhouetteVids + selected.vidId : null
-  const tagBox = useRef()
-
   const onPointerDown = e => { e.stopPropagation() }
+
+  const { height } = useSpring({
+    height: progress
+  })
 
   return (
     <>
@@ -151,11 +164,11 @@ export default function App() {
           </div>
           <div className="universityLogo">
             <div className="logoContainer">
-              <div className="logo" />
-              <div className="logoWhite" 
+              <animated.div className="logo"
                 style={{
-                  height: progress,
-                }}/>
+                  height: height.interpolate(height => `${height}%`),
+                }} />
+              <div className="logoWhite" />
             </div>
             <p className="college">LYMAN BRIGGS COLLEGE</p>
             <p className="commencement">- Commencement 2020 -</p>
@@ -175,15 +188,12 @@ export default function App() {
         </div>
 
         <div className="tagBox">
-          <ReactSearchBox
-            ref={tagBox}
-            placeholder="Press space to filter"
-            data={tagData}
-            onSelect={record => onSelectFilter(record)}
-            fuseConfigs={{
-              threshold: 0.05,
-            }}
-          />
+          <button className="dropbtn">Filter by tag</button>
+          <div className="dropdown-content">
+            {tagData.map((tag, idx) => {
+              return <a key={idx} onClick={() => onSelectFilter(tag)}>{tag.value}</a>
+            })}
+          </div>
         </div>
 
         <div className={`overlay ${selectedId ? '' : 'hidden'}`} onPointerDown={() => setSelected(null)}>

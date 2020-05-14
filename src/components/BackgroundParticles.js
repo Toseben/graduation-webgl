@@ -30,30 +30,17 @@ void main() {
 
 export default function BackgroundParticles({ useStore }) {
   const background = useRef()
-  const setLoaded = useStore(state => state.setLoaded)
   const setProgress = useStore(state => state.setProgress)
 
   const backgroundGltf = useLoader(GLTFLoader, 'assets/background_v001.glb', loader => {
     loader.manager.onProgress = (url, itemsLoaded, itemsTotal) => {
       setProgress(parseInt(itemsLoaded / itemsTotal * 100));
     };
-
-    loader.manager.onLoad = function () {
-      setTimeout(() => {
-        setLoaded(true)
-      }, 500)
-    };
   })
 
   const circleTex = useLoader(THREE.TextureLoader, 'assets/whiteCircle.png', loader => {
     loader.manager.onProgress = (url, itemsLoaded, itemsTotal) => {
       setProgress(parseInt(itemsLoaded / itemsTotal * 100));
-    };
-
-    loader.manager.onLoad = function () {
-      setTimeout(() => {
-        setLoaded(true)
-      }, 500)
     };
   })
 
