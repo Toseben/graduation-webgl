@@ -22,6 +22,7 @@ export default function ControlsOrbit({ useStore }) {
   const reflector = useStore(state => state.reflector)
   const setControls = useStore(state => state.setControls)
   const setHovered = useStore(state => state.setHovered)
+  const setSelected = useStore(state => state.setSelected)
 
   const controls = useRef()
   const { gl, camera, scene } = useThree()
@@ -86,9 +87,11 @@ export default function ControlsOrbit({ useStore }) {
     onRest() {
       if (loadAnimDone) return
       setLoadAnimDone(true)
-      // setTimeout(() => {
-        setHovered({ array: [{ instance: 0, vidId: 0 }], setter: 'search' })
-      // }, 1000)
+
+      setHovered({ array: [{ instance: 0, vidId: 0 }], setter: 'search' })
+      setTimeout(() => {
+        setSelected({ instance: 0, vidId: 0 })
+      }, 2500)
 
       if (!controls.current) return
       controls.current.enabled = true

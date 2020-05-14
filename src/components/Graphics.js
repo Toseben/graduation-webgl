@@ -46,8 +46,7 @@ function ChromaKey({ useStore }) {
   }
 
   useFrame(() => {
-    if (!selected) return
-
+    if (!selected || !video || !ctx1 || !ctx2) return
     const width = 480
     const height = 852
     ctx1.drawImage(video, 0, 0, width, height);
