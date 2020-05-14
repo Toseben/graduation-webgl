@@ -84,30 +84,28 @@ function InstacedAvatar({ useStore, vidId, avatars, material }) {
 
   const onPointerMove = (e) => {
     if (!loadAnimDone || selected) return
-    if (hovered) {
-      if (instances.includes(e.instanceId) && vidIds.includes(vidId)) return
-    }
+    if (hovered && instances.includes(e.instanceId) && vidIds.includes(vidId)) return
+    if (window.isMouseDown || window.isAnimating || window.isRotating) return
 
-    if (!window.controls.isRotating && !window.middleMouseDown) {
-      document.body.style.cursor = 'pointer'
-      setHovered({ array: [{ instance: e.instanceId, vidId }], setter: 'hover' })
-    }
+    document.body.style.cursor = 'pointer'
+    setHovered({ array: [{ instance: e.instanceId, vidId }], setter: 'hover' })
   }
 
   const onPointerOut = () => {
+    if (window.isMouseDown || window.isAnimating || window.isRotating) return
     document.body.style.cursor = 'auto'
     setHovered(undefined)
   }
 
   const onPointerDown = (e) => {
-    if (!loadAnimDone) return
-    if (!window.controls.isRotating) setSelected({ instance: e.instanceId, vidId })
+    if (window.isMouseDown || window.isAnimating || window.isRotating || !loadAnimDone) return
+    if (instances.includes(e.instanceId) && vidIds.includes(vidId)) setSelected({ instance: e.instanceId, vidId })
   }
 
   const scale = 0.001
   return (
     <instancedMesh ref={onRefChange} args={[null, null, avatars.length]} frustumCulled={false}
-      onPointerOver={e => onPointerMove(e)} onPointerOut={() => onPointerOut()} renderOrder={2}
+      onPointerMove={e => onPointerMove(e)} onPointerOut={() => onPointerOut()} renderOrder={2}
       onPointerDown={e => onPointerDown(e)} position={[0, 444 * scale * 0.5, 0]}>
       <planeBufferGeometry attach="geometry" args={[204 * scale, 444 * scale]}>
         <instancedBufferAttribute
@@ -234,7 +232,7 @@ function VideoAvatar({ useStore, index, avatarArray, uniforms }) {
 
   const scale = 0.000575
   const height = 852 * scale * 0.5
-  const lookAt = useMemo(() => new THREE.Vector3(0, height, 0))
+  const lookAt = useMemo(() => new THREE.Vector3(0, height, 0), [])
 
   const [data, name, visible] = useMemo(() => {
     if (!hovered || !hovered.array[index]) return [null, null, false]

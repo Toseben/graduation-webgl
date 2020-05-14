@@ -117,16 +117,19 @@ export default function ControlsOrbit({ useStore }) {
     config: { duration: 2500, easing: easings.easeSineInOut },
     onFrame({ firstTarget }) {
       if (!hovered || hovered.setter === 'hover') return
+      window.isAnimating = true
       camera.position.set(
         firstTarget[0],
         firstTarget[1],
         firstTarget[2]
       )
+    },
+    onRest() {
+      window.isAnimating = false
     }
   }, [])
 
   useEffect(() => {
-    controls.current.isRotating = false
     setControls(controls.current)
     window.controls = controls.current
 
@@ -134,14 +137,14 @@ export default function ControlsOrbit({ useStore }) {
     controls.current.mouseButtons = {
       LEFT: THREE.MOUSE.ROTATE,
       MIDDLE: THREE.MOUSE.DOLLY,
-      RIGHT: null
+      RIGHT: THREE.MOUSE.DOLLY
     }
   }, [])
 
   const prevRotation = useRef()
   useFrame(() => {
     controls.current.update()
-    controls.current.isRotating = Math.abs(prevRotation.current - camera.rotation.y) > 0.0005
+    window.isRotating = Math.abs(prevRotation.current - camera.rotation.y) > 0.0001
     prevRotation.current = camera.rotation.y
 
     const background = scene.getObjectByName('background')

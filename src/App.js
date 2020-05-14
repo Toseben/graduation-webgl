@@ -118,13 +118,8 @@ export default function App() {
     plane.style.oTransform = style;
   }
 
-  const onMouseUp = e => {
-    if (e.button === 1) window.middleMouseDown = false
-  }
-
-  const onMouseDown = e => {
-    if (e.button === 1) window.middleMouseDown = true
-  }
+  const onMouseUp = () => { window.isMouseDown = false }
+  const onMouseDown = () => { window.isMouseDown = true }
 
   useEffect(() => {
     window.addEventListener('mouseup', onMouseUp)
@@ -140,9 +135,7 @@ export default function App() {
   const selectedId = selected ? selected.instance * silhouetteVids + selected.vidId : null
   const tagBox = useRef()
 
-  const onPointerDown = e => {
-    e.stopPropagation();
-  }
+  const onPointerDown = e => { e.stopPropagation()}
 
   return (
     <>
