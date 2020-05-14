@@ -7,7 +7,10 @@
 #endif
 
 varying vec2 vUv;
-varying float vHover;
+
+#ifdef SILHOUETTE
+	varying float vHover;
+#endif
 
 uniform sampler2D map;
 uniform vec2 lum;
