@@ -147,7 +147,6 @@ export default function Avatars({ useStore }) {
       texture.magFilter = THREE.LinearFilter;
       texture.format = THREE.RGBFormat;
       texture.encoding = THREE.sRGBEncoding;
-      texture.generateMipmaps = true
 
       const uniforms = Object.assign(THREE.ShaderLib["basic"].uniforms, {
         map: { value: texture },
