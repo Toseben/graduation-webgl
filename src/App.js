@@ -121,16 +121,16 @@ export default function App() {
   const userPlane = useRef(null)
   const onMouseMove = e => {
     if (!userPlane.current || !selected) return
-    const YAngle = -(0.5 - (e.pageX / window.innerWidth)) * 20;
-    const XAngle = (0.5 - (e.pageY / window.innerWidth)) * 20;
+    // const YAngle = -(0.5 - (e.pageX / window.innerWidth)) * 20;
+    // const XAngle = (0.5 - (e.pageY / window.innerWidth)) * 20;
 
-    const style = `translate(-50%, -50%) rotateX(${XAngle}deg) rotateY(${YAngle}deg)`;
-    const plane = userPlane.current
-    plane.style.transform = style;
-    plane.style.webkitTransform = style;
-    plane.style.mozTranform = style;
-    plane.style.msTransform = style;
-    plane.style.oTransform = style;
+    // const style = `translate(-50%, -50%) rotateX(${XAngle}deg) rotateY(${YAngle}deg)`;
+    // const plane = userPlane.current
+    // plane.style.transform = style;
+    // plane.style.webkitTransform = style;
+    // plane.style.mozTranform = style;
+    // plane.style.msTransform = style;
+    // plane.style.oTransform = style;
   }
 
   const onMouseUp = () => { window.isMouseDown = false }
