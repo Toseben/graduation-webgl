@@ -80,7 +80,7 @@ const Graphics = ({ useStore }) => {
         far: 10000,
         near: 0.1,
         fov: 30,
-        position: [0, 10 * 250, -15 * 250]
+        position: [-15 * 250, 10 * 250, 0]
       }}>
 
       <ChromaKey useStore={useStore} />
@@ -92,8 +92,8 @@ const Graphics = ({ useStore }) => {
         <Galaxy useStore={useStore} />
       </Suspense>
 
-      <Text color="#fdfdfd" size={0.25} children={'Lymann Briggs College'} rotation={[0, Math.PI, 0]} position={[0, 1.8, 10]} />}
-      <Text color="#fdfdfd" size={0.2} children={'Commencement 2020'} rotation={[0, Math.PI, 0]} position={[0, 1.3, 10]} />}
+      <Text color="#fdfdfd" size={0.25} children={'Lymann Briggs College'} rotation={[0, Math.PI, 0]} position={[0, 3.25, 20]} />}
+      <Text color="#fdfdfd" size={0.2} children={'Commencement 2020'} rotation={[0, Math.PI, 0]} position={[0, 2.75, 20]} />}
 
       {loaded &&
         <ControlsOrbit useStore={useStore} />

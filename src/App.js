@@ -17,7 +17,7 @@ const [useStore, api] = create(set => ({
   selected: null,
   controls: null,
   reflector: null,
-  silhouetteVids: 3,
+  silhouetteVids: 4,
   loaded: false,
   loadAnimDone: false,
   studentData: [],
@@ -55,6 +55,7 @@ export default function App() {
   const silhouetteVids = useStore(state => state.silhouetteVids)
   const loadAnimDone = useStore(state => state.loadAnimDone)
   const setStudentData = useStore(state => state.setStudentData)
+  const [isSafari, setIsSafari] = useState(/^((?!chrome|android).)*safari/i.test(navigator.userAgent))
 
   useEffect(() => {
     if (progress === 100) {
@@ -120,7 +121,7 @@ export default function App() {
 
   const userPlane = useRef(null)
   const onMouseMove = e => {
-    if (!userPlane.current || !selected) return
+    if (!userPlane.current || !selected || isSafari) return
     const YAngle = -(0.5 - (e.pageX / window.innerWidth)) * 20;
     const XAngle = (0.5 - (e.pageY / window.innerWidth)) * 20;
 
@@ -217,7 +218,7 @@ export default function App() {
             <div className={`userContainer ${selectedId !== null ? '' : 'hidden'}`}>
               <div className="fireworksContainer">
                 <video className="fireworks" autoPlay loop muted>
-                  <source type="video/mp4" src="./assets/fireworksBlack.mp4"></source>
+                  <source type="video/mp4" src="./assets/fireworks_bg_1.mp4"></source>
                 </video>
               </div>
               <canvas id="c2" className="videoContainer" width="480" height="852"></canvas>

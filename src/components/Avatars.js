@@ -2,6 +2,8 @@ import * as THREE from 'three'
 import React, { useRef, useMemo, useCallback, useEffect } from 'react'
 import { useThree, useFrame } from 'react-three-fiber';
 
+import vertexSilhouette from "../shaders/Silhouette.vert";
+import fragmentSilhouette from "../shaders/Silhouette.frag";
 import vertexShader from "../shaders/Key.vert";
 import fragmentShader from "../shaders/Key.frag";
 import Text from '../helpers/Text'
@@ -133,13 +135,13 @@ export default function Avatars({ useStore }) {
     let videoArray = new Array(silhouetteVids).fill(null)
     return videoArray.map((node, idx) => {
       const video = document.createElement('video');
-      video.src = `assets/avatar_crop.webm`;
+      video.src = `assets/silhouettes/${idx + 1}.mp4`;
       video.loop = true
       video.muted = true
       video.id = `video-${idx}`
       video.load();
 
-      video.currentTime = idx / videoArray.length * 1.8
+      // video.currentTime = idx / videoArray.length * 1.8
       video.play()
 
       const texture = new THREE.VideoTexture(video);
@@ -150,19 +152,15 @@ export default function Avatars({ useStore }) {
 
       const uniforms = Object.assign(THREE.ShaderLib["basic"].uniforms, {
         map: { value: texture },
-        lum: { value: new THREE.Vector2(0.0, 0.1) },
-        uHover: { value: 1 },
+        lum: { value: new THREE.Vector2(0.0, 0.1) }
       });
 
       const material = new THREE.ShaderMaterial({
         uniforms,
-        vertexShader,
-        fragmentShader,
+        vertexShader: vertexSilhouette,
+        fragmentShader: fragmentSilhouette,
         transparent: true,
-        side: THREE.DoubleSide,
-        defines: {
-          HOVER: ''
-        }
+        side: THREE.DoubleSide
       }).clone()
 
       return { video, texture, material }

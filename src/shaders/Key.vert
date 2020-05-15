@@ -1,7 +1,4 @@
 varying vec2 vUv;
-varying float vHover;
-
-attribute float hover;
 
 #include <common>
 #include <uv_pars_vertex>
@@ -15,7 +12,6 @@ attribute float hover;
 #include <clipping_planes_pars_vertex>
 void main() {
 	vUv = uv;
-	vHover = hover;
 	#include <uv_vertex>
 	#include <uv2_vertex>
 	#include <color_vertex>
