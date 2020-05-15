@@ -1,6 +1,6 @@
-import React, { Suspense, useRef, useEffect, useMemo } from 'react'
+import React, { Suspense, useMemo } from 'react'
 import { Canvas, useFrame } from 'react-three-fiber';
-import Stats from 'stats.js'
+// import Stats from 'stats.js'
 
 import Avatars from "./Avatars"
 import FollowLight from "./FollowLight"
@@ -8,27 +8,28 @@ import ControlsOrbit from "./ControlsOrbit"
 import GroundReflector from "./GroundReflector"
 import Galaxy from "./Galaxy"
 import BackgroundParticles from "./BackgroundParticles"
+import Text from '../helpers/Text'
 
-function FPS({ useStore }) {
-  const stats = useRef()
-  
-  useEffect(() => {
-    stats.current = new Stats();
-    stats.current.showPanel(0);
-    stats.current.dom.classList.add('stats');
-    document.body.appendChild(stats.current.dom);
-  }, [])
+// function FPS({ useStore }) {
+//   const stats = useRef()
 
-  useFrame(() => {
-    if (!stats.current) return
-    stats.current.begin();
-    stats.current.end();
-  })
+//   useEffect(() => {
+//     stats.current = new Stats();
+//     stats.current.showPanel(0);
+//     stats.current.dom.classList.add('stats');
+//     document.body.appendChild(stats.current.dom);
+//   }, [])
 
-  return (
-    <></>
-  )
-}
+//   useFrame(() => {
+//     if (!stats.current) return
+//     stats.current.begin();
+//     stats.current.end();
+//   })
+
+//   return (
+//     <></>
+//   )
+// }
 
 function ChromaKey({ useStore }) {
   const selected = useStore(state => state.selected)
@@ -76,13 +77,11 @@ const Graphics = ({ useStore }) => {
     <Canvas
       gl={{ antialias: true }}
       camera={{
-        far: 10000, 
-        near: 0.1, 
+        far: 10000,
+        near: 0.1,
         fov: 30,
         position: [0, 10 * 250, -15 * 250]
       }}>
-
-      {/* <FPS useStore={useStore} /> */}
 
       <ChromaKey useStore={useStore} />
       <Suspense fallback={null}>
@@ -92,6 +91,9 @@ const Graphics = ({ useStore }) => {
         <BackgroundParticles useStore={useStore} />
         <Galaxy useStore={useStore} />
       </Suspense>
+
+      <Text color="#fdfdfd" size={0.25} children={'Lymann Briggs College'} rotation={[0, Math.PI, 0]} position={[0, 1.8, 10]} />}
+      <Text color="#fdfdfd" size={0.2} children={'Commencement 2020'} rotation={[0, Math.PI, 0]} position={[0, 1.3, 10]} />}
 
       {loaded &&
         <ControlsOrbit useStore={useStore} />
