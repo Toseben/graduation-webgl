@@ -217,7 +217,7 @@ export default function App() {
             <div className={`userContainer ${selectedId !== null ? '' : 'hidden'}`}>
               <div className="fireworksContainer">
                 <video className="fireworks" autoPlay loop muted>
-                  <source type="video/mp4" src="./assets/fireworksBlack.mp4"></source>
+                  <source type="video/mp4" src="./assets/fireworks_bg_1.mp4"></source>
                 </video>
               </div>
               <canvas id="c2" className="videoContainer" width="480" height="852"></canvas>
