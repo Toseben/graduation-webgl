@@ -55,6 +55,7 @@ export default function App() {
   const silhouetteVids = useStore(state => state.silhouetteVids)
   const loadAnimDone = useStore(state => state.loadAnimDone)
   const setStudentData = useStore(state => state.setStudentData)
+  const [isSafari, setIsSafari] = useState(/^((?!chrome|android).)*safari/i.test(navigator.userAgent))
 
   useEffect(() => {
     if (progress === 100) {
@@ -120,7 +121,7 @@ export default function App() {
 
   const userPlane = useRef(null)
   const onMouseMove = e => {
-    if (!userPlane.current || !selected) return
+    if (!userPlane.current || !selected || isSafari) return
     const YAngle = -(0.5 - (e.pageX / window.innerWidth)) * 20;
     const XAngle = (0.5 - (e.pageY / window.innerWidth)) * 20;
 
