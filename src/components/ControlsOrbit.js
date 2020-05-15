@@ -40,20 +40,38 @@ export default function ControlsOrbit({ useStore }) {
     return dummyVector
   }, [hovered])
 
+  const ringSpeed = 1000
   const height = 0.75
+  const circleMult = 8.5
+  const axis = new THREE.Vector3(0, 1, 0);
+  const angles = new Array(16).fill(null).map((o, idx) => {
+    return new THREE.Vector3(0, height, -1).applyAxisAngle(axis, THREE.Math.degToRad(-360 / 16 * idx))
+  })
+
   useSpring({
     from: {
-      camPos: [0, 10 * 250, -15 * 250],
-      camTarget: [0, height, 0],
-      size: 1,
+      camPos: [0, 10 * 250, -15 * 250], camTarget: [0, height, 0], size: 1,
     },
-    to: {
-      camPos: [0, height, -10],
-      camTarget: [0, height * 0.5, 0],
-      size: 0,
+    to: async (next, cancel) => {
+      await next({ camPos: [angles[0].x * circleMult, height, angles[0].z * circleMult], camTarget: [0, height * 0.5, 0], size: 0, config: { duration: 7500, easing: easings.easeSinInOut } }),
+
+      await next({ camPos: [angles[1].x * circleMult, height, angles[1].z * circleMult], config: { duration: ringSpeed, easing: easings.easeSinIn } }),
+      await next({ camPos: [angles[2].x * circleMult, height, angles[2].z * circleMult], config: { duration: ringSpeed, easing: easings.easeLinear } }),
+      await next({ camPos: [angles[3].x * circleMult, height, angles[3].z * circleMult], config: { duration: ringSpeed, easing: easings.easeLinear } }),
+      await next({ camPos: [angles[4].x * circleMult, height, angles[4].z * circleMult], config: { duration: ringSpeed, easing: easings.easeLinear } }),
+      await next({ camPos: [angles[5].x * circleMult, height, angles[5].z * circleMult], config: { duration: ringSpeed, easing: easings.easeLinear } }),
+      await next({ camPos: [angles[6].x * circleMult, height, angles[6].z * circleMult], config: { duration: ringSpeed, easing: easings.easeLinear } }),
+      await next({ camPos: [angles[7].x * circleMult, height, angles[7].z * circleMult], config: { duration: ringSpeed, easing: easings.easeLinear } })
+      await next({ camPos: [angles[8].x * circleMult, height, angles[8].z * circleMult], config: { duration: ringSpeed, easing: easings.easeLinear } })
+      await next({ camPos: [angles[9].x * circleMult, height, angles[9].z * circleMult], config: { duration: ringSpeed, easing: easings.easeLinear } })
+      await next({ camPos: [angles[10].x * circleMult, height, angles[10].z * circleMult], config: { duration: ringSpeed, easing: easings.easeLinear } })
+      await next({ camPos: [angles[11].x * circleMult, height, angles[11].z * circleMult], config: { duration: ringSpeed, easing: easings.easeLinear } })
+      await next({ camPos: [angles[12].x * circleMult, height, angles[12].z * circleMult], config: { duration: ringSpeed, easing: easings.easeLinear } })
+      await next({ camPos: [angles[13].x * circleMult, height, angles[13].z * circleMult], config: { duration: ringSpeed, easing: easings.easeLinear } })
+      await next({ camPos: [angles[14].x * circleMult, height, angles[14].z * circleMult], config: { duration: ringSpeed, easing: easings.easeLinear } })
+      await next({ camPos: [angles[15].x * circleMult, height, angles[15].z * circleMult], config: { duration: ringSpeed, easing: easings.easeLinear } })
+      await next({ camPos: [angles[0].x * circleMult, height, angles[0].z * circleMult], config: { duration: ringSpeed, easing: easings.easeSinOut } })
     },
-    config: { duration: 7500 * 1, easing: easings.easeSinOut },
-    delay: 1000,
     onFrame({ camPos, camTarget, size }) {
       if (loadAnimDone) return
       camera.position.set(
@@ -88,10 +106,10 @@ export default function ControlsOrbit({ useStore }) {
       if (loadAnimDone) return
       setLoadAnimDone(true)
 
-      setHovered({ array: [{ instance: 0, vidId: 0 }], setter: 'search' })
-      setTimeout(() => {
-        setSelected({ instance: 0, vidId: 0 })
-      }, 2500)
+      // setHovered({ array: [{ instance: 0, vidId: 0 }], setter: 'search' })
+      // setTimeout(() => {
+      //   setSelected({ instance: 0, vidId: 0 })
+      // }, 5000)
 
       if (!controls.current) return
       controls.current.enabled = true
