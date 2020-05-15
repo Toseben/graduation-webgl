@@ -1,17 +1,4 @@
-#ifdef HOVER
-	#define SILHOUETTE true
-#endif
-
-#ifndef HOVER
-	#define SILHOUETTE false
-#endif
-
 varying vec2 vUv;
-
-#ifdef SILHOUETTE
-	varying float vHover;
-#endif
-
 uniform sampler2D map;
 uniform vec2 lum;
 uniform float uHover;
@@ -27,10 +14,6 @@ void main()
 	amask = smoothstep(lum.x, lum.y ,amask);
 	amask = 1.0 - amask;
 
-	if (SILHOUETTE) {
-		gl_FragColor = vec4(a.rgb * 0.0, amask * vHover);
-	} else {
-		gl_FragColor = vec4(a.rgb, amask * uHover);
-	}
+	gl_FragColor = vec4(a.rgb, amask * uHover);
 	if ( gl_FragColor.a < 0.01 ) discard;
 }
