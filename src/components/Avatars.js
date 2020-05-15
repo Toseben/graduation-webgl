@@ -135,13 +135,13 @@ export default function Avatars({ useStore }) {
     let videoArray = new Array(silhouetteVids).fill(null)
     return videoArray.map((node, idx) => {
       const video = document.createElement('video');
-      video.src = `assets/avatar_crop.webm`;
+      video.src = `assets/silhouettes/${idx + 1}.mp4`;
       video.loop = true
       video.muted = true
       video.id = `video-${idx}`
       video.load();
 
-      video.currentTime = idx / videoArray.length * 1.8
+      // video.currentTime = idx / videoArray.length * 1.8
       video.play()
 
       const texture = new THREE.VideoTexture(video);

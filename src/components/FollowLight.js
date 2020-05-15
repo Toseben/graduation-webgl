@@ -29,11 +29,11 @@ export default function FollowLight({ useStore }) {
 
   return (
     <group ref={group} name="background">
-      <a.mesh position={props.xy.interpolate((x, y) => [x * 0.0035, y * 0.0015 + 1, -4])}>
+      <a.mesh position={props.xy.interpolate((x, y) => [x * 0.0035, Math.max(y * 0.003, 0.25), -4])}>
         <planeBufferGeometry attach="geometry" args={[0.75, 0.75]} />
         <meshBasicMaterial attach="material" map={cursorTex} transparent depthTest={false} blending={THREE.AdditiveBlending} />
       </a.mesh>
-      <a.mesh position={props.xy.interpolate((x, y) => [x * 0.0035, y * 0.0015 + 1, -4])}>
+      <a.mesh position={props.xy.interpolate((x, y) => [x * 0.0035, Math.max(y * 0.003, 0.25), -4])}>
         <sphereBufferGeometry attach="geometry" args={[0.02, 16, 16]} />
         <meshBasicMaterial attach="material"/>
       </a.mesh>

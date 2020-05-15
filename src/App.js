@@ -17,7 +17,7 @@ const [useStore, api] = create(set => ({
   selected: null,
   controls: null,
   reflector: null,
-  silhouetteVids: 3,
+  silhouetteVids: 4,
   loaded: false,
   loadAnimDone: false,
   studentData: [],
