@@ -21,8 +21,6 @@ export default function ControlsOrbit({ useStore }) {
   const setLoadAnimDone = useStore(state => state.setLoadAnimDone)
   const reflector = useStore(state => state.reflector)
   const setControls = useStore(state => state.setControls)
-  const setHovered = useStore(state => state.setHovered)
-  const setSelected = useStore(state => state.setSelected)
 
   const controls = useRef()
   const { gl, camera, scene } = useThree()
@@ -105,12 +103,6 @@ export default function ControlsOrbit({ useStore }) {
     onRest() {
       if (loadAnimDone) return
       setLoadAnimDone(true)
-
-      // setHovered({ array: [{ instance: 0, vidId: 0 }], setter: 'search' })
-      // setTimeout(() => {
-      //   setSelected({ instance: 0, vidId: 0 })
-      // }, 5000)
-
       if (!controls.current) return
       controls.current.enabled = true
       controls.current.maxPolarAngle = Math.PI / 2 - 0.025

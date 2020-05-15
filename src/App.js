@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useRef } from 'react'
+import React, { useMemo, useEffect, useRef, useState } from 'react'
 import Div100vh from 'react-div-100vh'
 import create from 'zustand'
 import ReactSearchBox from 'react-search-box'
@@ -154,6 +154,16 @@ export default function App() {
     height: progress
   })
 
+  const [showInstruction, setShowInstruction] = useState(true)
+  const onClickInstruction = () => {
+    setShowInstruction(false)
+    
+    setHovered({ array: [{ instance: 0, vidId: 0 }], setter: 'search' })
+    setTimeout(() => {
+      setSelected({ instance: 0, vidId: 0 })
+    }, 2000)
+  }
+
   return (
     <>
       <Div100vh style={{ height: `100rvh` }} className="vis-container">
@@ -175,7 +185,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="searchBox">
+        <div className={`searchBox ${showInstruction ? 'hidden' : ''}`}>
           <ReactSearchBox
             placeholder="Search for a name"
             data={searchData}
@@ -187,13 +197,19 @@ export default function App() {
           />
         </div>
 
-        <div className="tagBox">
+        <div className={`tagBox ${showInstruction ? 'hidden' : ''}`}>
           <button className="dropbtn">Filter by tag</button>
           <div className="dropdown-content">
             {tagData.map((tag, idx) => {
               return <a key={idx} onClick={() => onSelectFilter(tag)}>{tag.value}</a>
             })}
           </div>
+        </div>
+
+        <div className={`instructions ${showInstruction && loadAnimDone ? '' : 'hidden'}`} onClick={() => onClickInstruction()}>
+          <div className="instructionsIcon" />
+          <p className="instructionsText">CLICK TO</p>
+          <p className="instructionsText">ROTATE AND ZOOM</p>
         </div>
 
         <div className={`overlay ${selectedId !== null ? '' : 'hidden'}`} onPointerDown={() => setSelected(null)}>
