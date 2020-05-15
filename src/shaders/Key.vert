@@ -1,5 +1,4 @@
 varying vec2 vUv;
-varying float vHover;
 
 #include <common>
 #include <uv_pars_vertex>
