@@ -76,6 +76,13 @@ export default function App() {
     }
 
     fetchMarkdowns()
+
+    function imageExists(image_url) {
+      var http = new XMLHttpRequest();
+      http.open('HEAD', image_url, false);
+      http.send();
+      return http.status != 404;
+    }
   }, [])
 
   const searchData = useMemo(() => {
@@ -165,7 +172,7 @@ export default function App() {
     }
   }, [selected])
 
-  const selectedId = selected ? selected.instance * silhouetteVids + selected.vidId : null
+  const selectedId = selected ? (selected.instance * silhouetteVids + selected.vidId) : null
   const onPointerDown = e => { e.stopPropagation() }
 
   const { height } = useSpring({
@@ -246,7 +253,7 @@ export default function App() {
           <div className={`overlay ${selectedId !== null ? '' : 'hidden'}`} onPointerDown={() => setSelected(null)}>
             <div ref={userPlane} className="animateUserInfo" onPointerMove={e => onMouseMove(e)} onPointerDown={e => onPointerDown(e)}>
               <div className={`userContainer ${selectedId !== null ? '' : 'hidden'}`}>
-                <div className="fireworksContainer">
+                <div className={`fireworksContainer ${(selectedId !== null && studentData[selectedId].speech) ? '' : 'show'}`}>
                   <video className="fireworks" autoPlay loop muted>
                     <source type="video/mp4" src="./assets/fireworks_bg_1.mp4"></source>
                   </video>

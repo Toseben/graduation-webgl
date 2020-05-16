@@ -91,7 +91,7 @@ const Graphics = ({ useStore }) => {
       camera={{
         far: 10000,
         near: 0.1,
-        fov: 30,
+        fov: 25,
         position: [-15 * 250, 10 * 250, -15 * 250]
       }}>
 

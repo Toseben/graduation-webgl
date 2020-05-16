@@ -57,7 +57,7 @@ video {
   top: 0;
   left: 0;
   z-index: 2;
-  background: rgba(0, 0, 0, 0.66);
+  background: rgba(0, 0, 0, 0.825);
   visibility: visible;
   transition: background 0.5s ease-in-out, visibility 0.5s ease-in-out;
   &.hidden {
@@ -245,6 +245,13 @@ video {
   border: solid 1px black;
   border-radius: 10px;
   overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+  &.shows {
+    opacity: 1;
+    visibility: visible;
+  }
 }
 
 .fireworks {

@@ -11,7 +11,7 @@ export default function Avatars({ useStore }) {
   const silhouetteVids = useStore(state => state.silhouetteVids)
   const studentData = useStore(state => state.studentData)
 
-  const radius = 3.75
+  const radius = 4.5
   const avatarArray = studentData.map((user, idx) => {
     const x = Math.sin(idx / studentData.length * Math.PI * 2) * radius
     const z = Math.cos(idx / studentData.length * Math.PI * 2) * radius
