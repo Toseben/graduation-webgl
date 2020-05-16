@@ -19,6 +19,14 @@ export default function VideoAvatar({ useStore, index, avatarArray, uniforms }) 
   const height = 852 * scale * 0.5
   const lookAt = useMemo(() => new THREE.Vector3(0, height, 0), [])
 
+  const onLoaded = material => {
+    setTimeout(() => {
+      material.visible = true
+      material.needsUpdate = true
+      // console.log('visible = true')
+    }, 250)
+  }
+
   const [data, name, visible] = useMemo(() => {
     if (!hovered || !hovered.array[index]) return [null, null, false]
     const hoveredUserId = hovered.array[index].instance * silhouetteVids + hovered.array[index].vidId
@@ -27,11 +35,22 @@ export default function VideoAvatar({ useStore, index, avatarArray, uniforms }) 
     name = `${name.split(' ')[0]} ${name.split(' ')[1][0]}`
 
     if (videoAvatarRef.current.material.uniforms) {
+      // console.log('visible = false')
+      videoAvatarRef.current.material.visible = false
+      videoAvatarRef.current.material.needsUpdate = true
+
       const video = videoAvatarRef.current.material.uniforms.map.value.image
-      const videoPath = studentData[hoveredUserId].largeVideoPath.replace('largeVideos', 'dataStructure/largeVideos')
-      video.setAttribute('src', videoPath);
-      video.load();
-      video.play();
+      video.removeEventListener('loadeddata', onLoaded)
+      video.pause();
+      video.src = "";
+
+      setTimeout(() => {
+        video.addEventListener('loadeddata', onLoaded(videoAvatarRef.current.material), false);
+        const videoPath = studentData[hoveredUserId].largeVideoPath.replace('largeVideos', 'dataStructure/largeVideos')
+        video.setAttribute('src', videoPath);
+        video.load();
+        video.play();
+      }, 1)
     }
 
     return [data, name, true]

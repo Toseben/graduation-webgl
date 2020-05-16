@@ -13,6 +13,7 @@ export default function InstacedAvatar({ useStore, vidId, avatars, material }) {
   const setHovered = useStore(state => state.setHovered)
   const setSelected = useStore(state => state.setSelected)
   const loadAnimDone = useStore(state => state.loadAnimDone)
+  const speech = useStore(state => state.speech)
 
   const meshRef = useRef();
   const { camera } = useThree()
@@ -79,7 +80,7 @@ export default function InstacedAvatar({ useStore, vidId, avatars, material }) {
   })
 
   const onPointerMove = (e) => {
-    if (!loadAnimDone || selected) return
+    if (!loadAnimDone || selected || speech !== 3) return
     if (hovered && instances.includes(e.instanceId) && vidIds.includes(vidId)) return
     if (window.isMouseDown || window.isAnimating || window.isRotating) return
 
@@ -88,7 +89,7 @@ export default function InstacedAvatar({ useStore, vidId, avatars, material }) {
   }
 
   const onPointerOut = () => {
-    if (window.isMouseDown || window.isAnimating || window.isRotating) return
+    if (window.isMouseDown || window.isAnimating || window.isRotating || speech !== 3) return
     document.body.style.cursor = 'auto'
     setHovered(undefined)
   }

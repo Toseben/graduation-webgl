@@ -12,6 +12,7 @@ import './styles/styles.scss';
 
 const [useStore, api] = create(set => ({
   // GETTERS
+  speech: 0,
   progress: 0,
   hovered: null,
   selected: null,
@@ -23,6 +24,7 @@ const [useStore, api] = create(set => ({
   studentData: null,
 
   // SETTERS
+  setSpeech: (speech) => set({ speech }),
   setProgress: (progress) => set({ progress }),
   setHovered: (hovered) => set({ hovered }),
   setSelected: (selected) => set({ selected }),
@@ -34,6 +36,8 @@ const [useStore, api] = create(set => ({
 }))
 
 export default function App() {
+  const speech = useStore(state => state.speech)
+  const setSpeech = useStore(state => state.setSpeech)
   const loaded = useStore(state => state.loaded)
   const progress = useStore(state => state.progress)
   const hovered = useStore(state => state.hovered)
@@ -46,7 +50,6 @@ export default function App() {
   const studentData = useStore(state => state.studentData)
   const setStudentData = useStore(state => state.setStudentData)
   const [isSafari, setIsSafari] = useState(/^((?!chrome|android).)*safari/i.test(navigator.userAgent))
-  const [speech, setSpeech] = useState(0)
 
   useEffect(() => {
     if (progress === 100) {
