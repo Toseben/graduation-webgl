@@ -58,7 +58,9 @@ export default function App() {
 
   useEffect(() => {
     async function fetchMarkdowns() {
+      // const array = []
       const markdownPromises = AvatarData.map(avatar => {
+        // array.push(avatar.markdownPath.split('/')[2])
         return axios.get(avatar.markdownPath.replace('markdowns', 'dataStructure/markdowns'))
           .then(res => res.data)
           .catch(e => console.error(e));
@@ -74,16 +76,10 @@ export default function App() {
       })
 
       setStudentData(data)
+      // array.sort()
     }
 
     fetchMarkdowns()
-
-    // function imageExists(image_url) {
-    //   var http = new XMLHttpRequest();
-    //   http.open('HEAD', image_url, false);
-    //   http.send();
-    //   return http.status != 404;
-    // }
   }, [])
 
   const searchData = useMemo(() => {

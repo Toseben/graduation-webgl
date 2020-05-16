@@ -62,7 +62,7 @@ export default function ControlsOrbit({ useStore }) {
       await next({ camPos: [angles[7].x * circleMult, height, angles[7].z * circleMult], config: { duration: ringSpeed, easing: easings.easeSinOut } })
     },
     onFrame({ camPos, camTarget, size }) {
-      if (loadAnimDone) return
+      if (loadAnimDone || !controls.current) return
       camera.position.set(
         camPos[0],
         camPos[1],
