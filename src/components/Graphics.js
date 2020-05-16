@@ -48,8 +48,8 @@ function ChromaKey({ useStore }) {
 
   useFrame(() => {
     if (!selected || !video || !ctx1 || !ctx2) return
-    const width = 480
-    const height = 852
+    const width = 735
+    const height = 1080
     ctx1.drawImage(video, 0, 0, width, height);
 
     let frame = ctx1.getImageData(0, 0, width, height);
@@ -83,7 +83,7 @@ const Graphics = ({ useStore }) => {
         position: [-15 * 250, 10 * 250, 0]
       }}>
 
-      <ChromaKey useStore={useStore} />
+      {/* <ChromaKey useStore={useStore} /> */}
       <Suspense fallback={null}>
         <Avatars useStore={useStore} />
         <FollowLight useStore={useStore} />

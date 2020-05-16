@@ -4,11 +4,11 @@ import create from 'zustand'
 import ReactSearchBox from 'react-search-box'
 import marked from 'marked';
 import { useSpring, animated } from 'react-spring'
-import * as easings from 'd3-ease'
+import AvatarData from './data/AvatarData'
+import axios from 'axios';
 
 import Graphics from './components/Graphics';
 import './styles/styles.scss';
-const markdownText = require("./markdownText.md");
 
 const [useStore, api] = create(set => ({
   // GETTERS
@@ -20,7 +20,7 @@ const [useStore, api] = create(set => ({
   silhouetteVids: 4,
   loaded: false,
   loadAnimDone: false,
-  studentData: [],
+  studentData: null,
 
   // SETTERS
   setProgress: (progress) => set({ progress }),
@@ -33,17 +33,6 @@ const [useStore, api] = create(set => ({
   setStudentData: (studentData) => set({ studentData })
 }))
 
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
-function generateName() {
-  const name1 = ["Liane", "Sharmaine", "Micheline", "Verdell", "Angelina", "Billie", "Jaimee", "Jaye", "Thea", "Alethea", "Caroline", "Garland", "Leatrice", "Zenia", "Javier", "Nancee", "Aurora", "Ashely", "Kam", "Dorian",]
-  const name2 = ["Paskett", "Birmingham", "Taketa", "Troxell", "Stengel", "Cosgrove", "Leyva", "Polasek", "Vose", "Sokoloski", "Olmstead", "Watt", "Peacock", "Knapp", "Houghtaling", "Krok", "Baucom", "Daulton", "Kopacz", "Talavera",]
-  const name = name1[getRandomInt(0, name1.length)] + ' ' + name2[getRandomInt(0, name2.length)];
-  return name;
-}
-
 export default function App() {
   const loaded = useStore(state => state.loaded)
   const progress = useStore(state => state.progress)
@@ -54,6 +43,7 @@ export default function App() {
   const setSelected = useStore(state => state.setSelected)
   const silhouetteVids = useStore(state => state.silhouetteVids)
   const loadAnimDone = useStore(state => state.loadAnimDone)
+  const studentData = useStore(state => state.studentData)
   const setStudentData = useStore(state => state.setStudentData)
   const [isSafari, setIsSafari] = useState(/^((?!chrome|android).)*safari/i.test(navigator.userAgent))
 
@@ -65,36 +55,63 @@ export default function App() {
     }
   }, [progress])
 
-  const [studentData, searchData] = useMemo(() => {
-    let studentData = new Array(100).fill()
-    let counter = 0
-    studentData = studentData.map(user => {
-      user = {}
-      user.userId = counter
-      user.name = generateName()
-      user.markdown = marked(`# ${user.name}\n\n${markdownText}`)
-      user.tags = []
-      if (counter < 20) user.tags = ['First']
-      if (counter < 10) user.tags = ['First', 'Honors']
-      counter++
-      return user
-    })
+  useEffect(() => {
+    async function fetchMarkdowns() {
+      const markdownPromises = AvatarData.map(avatar => {
+        return axios.get(avatar.markdownPath.replace('markdowns', 'dataStructure/markdowns'))
+          .then(res => res.data)
+          .catch(e => console.error(e));
+      })
 
+      const markdownData = await Promise.all(markdownPromises)
+      const data = AvatarData.map((avatar, idx) => {
+        avatar.userId = idx
+        avatar.name = avatar.avatarName
+        const markdown = markdownData[idx].replace(/markdownAssetPath/g, 'dataStructure/markdownAssetPath')
+        avatar.markdown = marked(markdown)
+        return avatar
+      })
+
+      setStudentData(data)
+    }
+
+    fetchMarkdowns()
+  }, [])
+
+  const searchData = useMemo(() => {
+    if (!studentData) return null
     const searchData = studentData.map(user => {
       return { value: user.name, userId: user.userId }
     })
 
-    setStudentData(studentData)
-    return [studentData, searchData]
-  }, [])
+    return searchData
+  }, [studentData])
 
   const tagData = useMemo(() => {
-    const tagData = [
-      { value: ' Honors' },
-      { value: ' First' }
-    ]
+    if (!studentData) return null
+
+    // const tagCounter = {}
+    // studentData.forEach(data => {
+    //   data.tags.forEach(tag => {
+    //     if (!tagCounter[tag]) tagCounter[tag] = 1
+    //     else tagCounter[tag] += 1
+    //   })
+    // })
+
+    let tags = []
+    studentData.forEach(data => {
+      data.tags.forEach(tag => {
+        if (!tags.includes(tag)) tags.push(tag)
+      })
+    })
+
+    tags = tags.filter(tag => tag !== 'Students')
+    tags.sort()
+    const tagData = tags.map(tag => {
+      return { value: tag }
+    })
     return tagData
-  }, [])
+  }, [studentData])
 
   const onSelect = record => {
     if (!loadAnimDone) return
@@ -158,12 +175,14 @@ export default function App() {
   const [showInstruction, setShowInstruction] = useState(true)
   const onClickInstruction = () => {
     setShowInstruction(false)
-    
+
     setHovered({ array: [{ instance: 0, vidId: 0 }], setter: 'search' })
     setTimeout(() => {
       setSelected({ instance: 0, vidId: 0 })
     }, 2000)
   }
+
+  const popupImagePath = selectedId ? studentData[selectedId].smallVideoPath.replace('smallVideos', 'dataStructure/smallVideos') : null
 
   return (
     <>
@@ -186,60 +205,63 @@ export default function App() {
           </div>
         </div>
 
-        <div className={`searchBox ${showInstruction ? 'hidden' : ''}`}>
-          <ReactSearchBox
-            placeholder="Search for a name"
-            data={searchData}
-            onSelect={record => onSelect(record)}
-            onChange={() => onChange()}
-            fuseConfigs={{
-              threshold: 0.05,
-            }}
-          />
-        </div>
-
-        <div className={`tagBox ${showInstruction ? 'hidden' : ''}`}>
-          <button className="dropbtn">Filter by tag</button>
-          <div className="dropdown-content">
-            {tagData.map((tag, idx) => {
-              return <a key={idx} onClick={() => onSelectFilter(tag)}>{tag.value}</a>
-            })}
-          </div>
-        </div>
-
         <div className={`instructions ${showInstruction && loadAnimDone ? '' : 'hidden'}`} onClick={() => onClickInstruction()}>
           <div className="instructionsIcon" />
           <p className="instructionsText">CLICK TO</p>
           <p className="instructionsText">ROTATE AND ZOOM</p>
         </div>
 
-        <div className={`overlay ${selectedId !== null ? '' : 'hidden'}`} onPointerDown={() => setSelected(null)}>
-          <div ref={userPlane} className="animateUserInfo" onPointerMove={e => onMouseMove(e)} onPointerDown={e => onPointerDown(e)}>
-            <div className={`userContainer ${selectedId !== null ? '' : 'hidden'}`}>
-              <div className="fireworksContainer">
-                <video className="fireworks" autoPlay loop muted>
-                  <source type="video/mp4" src="./assets/fireworks_bg_1.mp4"></source>
-                </video>
-              </div>
-              <canvas id="c2" className="videoContainer" width="480" height="852"></canvas>
-              <div className="closeButton" onClick={() => setSelected(null)} />
-              <div className={`studentDetails`}>
-                {studentData[selectedId] &&
-                  <div className="text" dangerouslySetInnerHTML={{ __html: studentData[selectedId].markdown }}></div>
-                }
+        {studentData && <>
+          <div className={`searchBox ${showInstruction ? 'hidden' : ''}`}>
+            <ReactSearchBox
+              placeholder="Search for a name"
+              data={searchData}
+              onSelect={record => onSelect(record)}
+              onChange={() => onChange()}
+              fuseConfigs={{
+                threshold: 0.05,
+              }}
+            />
+          </div>
+
+          <div className={`tagBox ${showInstruction ? 'hidden' : ''}`}>
+            <button className="dropbtn">Filter by tag</button>
+            <div className="dropdown-content">
+              {tagData.map((tag, idx) => {
+                return <a key={idx} onClick={() => onSelectFilter(tag)}>{tag.value}</a>
+              })}
+            </div>
+          </div>
+
+          <div className={`overlay ${selectedId !== null ? '' : 'hidden'}`} onPointerDown={() => setSelected(null)}>
+            <div ref={userPlane} className="animateUserInfo" onPointerMove={e => onMouseMove(e)} onPointerDown={e => onPointerDown(e)}>
+              <div className={`userContainer ${selectedId !== null ? '' : 'hidden'}`}>
+                <div className="fireworksContainer">
+                  <video className="fireworks" autoPlay loop muted>
+                    <source type="video/mp4" src="./assets/fireworks_bg_1.mp4"></source>
+                  </video>
+                </div>
+                {/* <canvas id="c2" className="videoContainer" width="735" height="1080"></canvas> */}
+                <img id="c2" className="videoContainer" src={popupImagePath}></img>
+                <div className="closeButton" onClick={() => setSelected(null)} />
+                <div className={`studentDetails`}>
+                  {studentData[selectedId] &&
+                    <div className="text" dangerouslySetInnerHTML={{ __html: studentData[selectedId].markdown }}></div>
+                  }
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className='greenScreen'>
-          <canvas id="c1" width="480" height="852"></canvas>
-          <video id="video" autoPlay loop muted>
-            <source type="video/mp4" src="./assets/cartoonKey_trim.mp4"></source>
-          </video>
-        </div>
+          {/* <div className='greenScreen'>
+            <canvas id="c1" width="735" height="1080"></canvas>
+            <video id="video" autoPlay loop muted>
+              <source type="video/mp4" src="./assets/cartoonKey_trim.mp4"></source>
+            </video>
+          </div> */}
 
-        <Graphics useStore={useStore} />
+          <Graphics useStore={useStore} />
+        </>}
       </Div100vh>
     </>
   );

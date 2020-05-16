@@ -169,7 +169,7 @@ export default function Avatars({ useStore }) {
 
   const cartoonVidUniforms = useMemo(() => {
     const video = document.createElement('video');
-    video.src = `assets/cartoonKey_trim.mp4`;
+    video.src = `dataStructure/largeVideos/aavikumarBhakta.mp4`;
     video.loop = true
     video.muted = true
     video.id = `cartoon-video`
@@ -199,7 +199,7 @@ export default function Avatars({ useStore }) {
     })
   }, [])
 
-  let maxAvatars = new Array(20).fill()
+  let maxAvatars = new Array(32).fill()
 
   return (
     <group name="avatarParent">
@@ -237,6 +237,15 @@ function VideoAvatar({ useStore, index, avatarArray, uniforms }) {
     const data = avatarArray[hoveredUserId]
     let name = studentData[hoveredUserId].name
     name = `${name.split(' ')[0]} ${name.split(' ')[1][0]}`
+
+    if (mesh.current.material.uniforms) {
+      const video = mesh.current.material.uniforms.map.value.image
+      const videoPath = studentData[hoveredUserId].largeVideoPath.replace('largeVideos', 'dataStructure/largeVideos')
+      video.setAttribute('src', videoPath);
+      video.load();
+      video.play();
+    }
+
     return [data, name, true]
   }, [hovered])
 

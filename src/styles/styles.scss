@@ -82,7 +82,8 @@ video {
   border-radius: 10px;
   // overflow: hidden;
   border: solid 1px black;
-  width: 75vmin;
+  width: 85vw;
+  max-width: 100vh;
   height: 75vmin;
   transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
   transform: scale(1);
@@ -91,8 +92,9 @@ video {
     transform: translateY(50vmin) scale(0.25);
   }
   .videoContainer {
-    width: 50%;
+    width: calc(75vmin * 735 / 1080);
     z-index: 2;
+    opacity: 0.5;
   }
   .closeButton {
     width: 50px;
@@ -117,8 +119,9 @@ video {
 
 .studentDetails {
   color: white;
-  width: 50%;
+  width: auto;
   display: flex;
+  flex: 1;
   flex-direction: column;
   text-align: center;
   align-items: center;
@@ -173,12 +176,12 @@ video {
 .tagBox {
   right: auto;
   left: 0;
-  width: 260px;
+  width: 375px;
   .dropbtn {
     color: white;
     border: none;
     cursor: pointer;
-    width: 260px;
+    width: 375px;
     height: 40px;
     background: rgba(0, 0, 0, 0.5);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.75);
@@ -235,7 +238,7 @@ video {
 }
 
 .fireworksContainer {
-  width: 50%;
+  width: calc(75vmin * 735 / 1080);
   height: 100%;
   position: absolute;
   border: solid 1px black;
