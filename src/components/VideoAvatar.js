@@ -24,7 +24,7 @@ export default function VideoAvatar({ useStore, index, avatarArray, uniforms }) 
       material.visible = true
       material.needsUpdate = true
       // console.log('visible = true')
-    }, 250)
+    }, 400)
   }
 
   const [data, name, visible] = useMemo(() => {
@@ -50,7 +50,7 @@ export default function VideoAvatar({ useStore, index, avatarArray, uniforms }) 
         video.setAttribute('src', videoPath);
         video.load();
         video.play();
-      }, 1)
+      }, 100)
     }
 
     return [data, name, true]
