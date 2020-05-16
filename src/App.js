@@ -46,6 +46,7 @@ export default function App() {
   const studentData = useStore(state => state.studentData)
   const setStudentData = useStore(state => state.setStudentData)
   const [isSafari, setIsSafari] = useState(/^((?!chrome|android).)*safari/i.test(navigator.userAgent))
+  const [speech, setSpeech] = useState(0)
 
   useEffect(() => {
     if (progress === 100) {
@@ -77,12 +78,12 @@ export default function App() {
 
     fetchMarkdowns()
 
-    function imageExists(image_url) {
-      var http = new XMLHttpRequest();
-      http.open('HEAD', image_url, false);
-      http.send();
-      return http.status != 404;
-    }
+    // function imageExists(image_url) {
+    //   var http = new XMLHttpRequest();
+    //   http.open('HEAD', image_url, false);
+    //   http.send();
+    //   return http.status != 404;
+    // }
   }, [])
 
   const searchData = useMemo(() => {
@@ -196,6 +197,27 @@ export default function App() {
     audio.current.volume = 0.15
   }, [])
 
+  const closePopUp = () => {
+    if (speech === 0) {
+      setSpeech(1)
+      setHovered({ array: [{ instance: 0, vidId: 1 }], setter: 'search' })
+      setSelected(null)
+      setTimeout(() => {
+        setSelected({ instance: 0, vidId: 1 })
+      }, 1000)
+    } else if (speech === 1) {
+      setSpeech(2)
+      setHovered({ array: [{ instance: 0, vidId: 2 }], setter: 'search' })
+      setSelected(null)
+      setTimeout(() => {
+        setSelected({ instance: 0, vidId: 2 })
+      }, 1000)
+    } else {
+      setSpeech(3)
+      setSelected(null)
+    }
+  }
+
   return (
     <>
       <Div100vh style={{ height: `100rvh` }} className="vis-container">
@@ -229,7 +251,7 @@ export default function App() {
         </audio>
 
         {studentData && <>
-          <div className={`searchBox ${showInstruction ? 'hidden' : ''}`}>
+          <div className={`searchBox ${showInstruction && speech !== 3 ? 'hidden' : ''}`}>
             <ReactSearchBox
               placeholder="Search for a name"
               data={searchData}
@@ -241,7 +263,7 @@ export default function App() {
             />
           </div>
 
-          <div className={`tagBox ${showInstruction ? 'hidden' : ''}`}>
+          <div className={`tagBox ${showInstruction && speech !== 3 ? 'hidden' : ''}`}>
             <button className="dropbtn">Select</button>
             <div className="dropdown-content">
               {tagData.map((tag, idx) => {
@@ -250,7 +272,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className={`overlay ${selectedId !== null ? '' : 'hidden'}`} onPointerDown={() => setSelected(null)}>
+          <div className={`overlay ${selectedId !== null ? '' : 'hidden'}`} onPointerDown={() => closePopUp()}>
             <div ref={userPlane} className="animateUserInfo" onPointerMove={e => onMouseMove(e)} onPointerDown={e => onPointerDown(e)}>
               <div className={`userContainer ${selectedId !== null ? '' : 'hidden'}`}>
                 <div className={`fireworksContainer ${(selectedId !== null && studentData[selectedId].speech) ? '' : 'show'}`}>
@@ -260,7 +282,7 @@ export default function App() {
                 </div>
                 {/* <canvas id="c2" className="videoContainer" width="735" height="1080"></canvas> */}
                 <img id="c2" className="videoContainer" src={popupImagePath}></img>
-                <div className="closeButton" onClick={() => setSelected(null)} />
+                <div className="closeButton" onClick={() => closePopUp()} />
                 <div className={`studentDetails`}>
                   {studentData[selectedId] &&
                     <div className="text" dangerouslySetInnerHTML={{ __html: studentData[selectedId].markdown }}></div>

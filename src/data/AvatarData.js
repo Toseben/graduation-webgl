@@ -18,6 +18,15 @@ const AvatarData = [
   },
   
   {
+    "avatarName": "Isabel Cary",
+    "markdownPath": "./markdowns/isabelCary.md",
+    "smallVideoPath": "./smallVideos/isabelCary.jpg",
+    "largeVideoPath": "./largeVideos/isabelCary.mp4",
+    "tags": ["Students"],
+    "speech": true
+  },
+
+  {
   "avatarName": "John Robertson",
   "markdownPath": "./markdowns/johnRobertson.md",
   "smallVideoPath": "./smallVideos/johnRobertson.jpg",
@@ -154,13 +163,6 @@ const AvatarData = [
   "markdownPath": "./markdowns/ryanCarpenter.md",
   "smallVideoPath": "./smallVideos/ryanCarpenter.jpg",
   "largeVideoPath": "./largeVideos/ryanCarpenter.mp4",
-  "tags": ["Students"]
-},
-{
-  "avatarName": "Isabel Cary",
-  "markdownPath": "./markdowns/isabelCary.md",
-  "smallVideoPath": "./smallVideos/isabelCary.jpg",
-  "largeVideoPath": "./largeVideos/isabelCary.mp4",
   "tags": ["Students"]
 },
 
