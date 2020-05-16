@@ -169,7 +169,14 @@ export default function App() {
     }
   }, [selected])
 
-  const selectedId = selected ? (selected.instance * silhouetteVids + selected.vidId) : null
+  const [selectedId, popupImagePath, videoPath] = useMemo(() => {
+    if (!selected) return [null, null, null]
+    const selectedId = selected.instance * silhouetteVids + selected.vidId
+    const popupImagePath = studentData[selectedId].smallVideoPath.replace('smallVideos', 'dataStructure/smallVideos')
+    const videoPath = studentData[selectedId].speech ? 'speech' : 'fireworks'
+    return [selectedId, popupImagePath, videoPath]
+  }, [selected])
+
   const onPointerDown = e => { e.stopPropagation() }
 
   const { height } = useSpring({
@@ -186,11 +193,9 @@ export default function App() {
     }, 4000)
   }
 
-  const popupImagePath = selectedId ? studentData[selectedId].smallVideoPath.replace('smallVideos', 'dataStructure/smallVideos') : null
-
   const audio = useRef()
   useEffect(() => {
-    audio.current.volume = 0.15
+    audio.current.volume = 0.075
   }, [])
 
   const closePopUp = () => {
@@ -246,6 +251,43 @@ export default function App() {
           Your browser does not support the audio element.
         </audio>
 
+        <div className={`overlay ${selectedId !== null ? '' : 'hidden'}`} onPointerDown={() => closePopUp()}>
+          <div ref={userPlane} className="animateUserInfo" onPointerMove={e => onMouseMove(e)} onPointerDown={e => onPointerDown(e)}>
+            <div className={`userContainer ${selectedId !== null ? '' : 'hidden'}`}>
+              <div className="fireworksContainer">
+                {videoPath === 'fireworks' &&
+                  <video className="fireworks" autoPlay loop muted>
+                    <source type="video/mp4" src="./assets/fireworks_bg_1.mp4"></source>
+                  </video>
+                }
+                {videoPath === 'speech' && speech === 0 &&
+                  <iframe className="embed" allow="autoplay"
+                    src="https://www.youtube.com/embed/xH9uwf3zcn8?autoplay=1">
+                  </iframe>
+                }
+                {videoPath === 'speech' && speech === 1 &&
+                  <iframe className="embed" allow="autoplay"
+                    src="https://www.youtube.com/embed/rDmkxqgOomg?autoplay=1">
+                  </iframe>
+                }
+                {videoPath === 'speech' && speech === 2 &&
+                  <iframe className="embed" allow="autoplay"
+                    src="https://www.youtube.com/embed/UWkZBD3qmKo?autoplay=1">
+                  </iframe>
+                }
+              </div>
+              {/* <canvas id="c2" className="videoContainer" width="735" height="1080"></canvas> */}
+              {speech === 3 && <img id="c2" className="videoContainer" src={popupImagePath}></img>}
+              <div className="closeButton" onClick={() => closePopUp()} />
+              <div className={`studentDetails`}>
+                {studentData && studentData[selectedId] &&
+                  <div className="text" dangerouslySetInnerHTML={{ __html: studentData[selectedId].markdown }}></div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
         {studentData && <>
           <div className={`searchBox ${showInstruction && speech !== 3 ? 'hidden' : ''}`}>
             <ReactSearchBox
@@ -265,26 +307,6 @@ export default function App() {
               {tagData.map((tag, idx) => {
                 return <a key={idx} onClick={() => onSelectFilter(tag)}>{tag.value}</a>
               })}
-            </div>
-          </div>
-
-          <div className={`overlay ${selectedId !== null ? '' : 'hidden'}`} onPointerDown={() => closePopUp()}>
-            <div ref={userPlane} className="animateUserInfo" onPointerMove={e => onMouseMove(e)} onPointerDown={e => onPointerDown(e)}>
-              <div className={`userContainer ${selectedId !== null ? '' : 'hidden'}`}>
-                <div className={`fireworksContainer ${(selectedId !== null && studentData[selectedId].speech) ? '' : 'show'}`}>
-                  <video className="fireworks" autoPlay loop muted>
-                    <source type="video/mp4" src="./assets/fireworks_bg_1.mp4"></source>
-                  </video>
-                </div>
-                {/* <canvas id="c2" className="videoContainer" width="735" height="1080"></canvas> */}
-                <img id="c2" className="videoContainer" src={popupImagePath}></img>
-                <div className="closeButton" onClick={() => closePopUp()} />
-                <div className={`studentDetails`}>
-                  {studentData[selectedId] &&
-                    <div className="text" dangerouslySetInnerHTML={{ __html: studentData[selectedId].markdown }}></div>
-                  }
-                </div>
-              </div>
             </div>
           </div>
 

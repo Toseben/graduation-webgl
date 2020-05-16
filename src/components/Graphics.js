@@ -105,7 +105,7 @@ const Graphics = ({ useStore }) => {
         <HelmetLogo />
       </Suspense>
 
-      <Text color="#fdfdfd" size={0.25} children={'Lymann Briggs College'} rotation={[0, Math.PI, 0]} position={[0, 3.25, 20]} />}
+      <Text color="#fdfdfd" size={0.25} children={'Lyman Briggs College'} rotation={[0, Math.PI, 0]} position={[0, 3.25, 20]} />}
       <Text color="#fdfdfd" size={0.2} children={'Commencement 2020'} rotation={[0, Math.PI, 0]} position={[0, 2.75, 20]} />}
 
       {loaded &&
