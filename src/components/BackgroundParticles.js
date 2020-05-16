@@ -3,7 +3,7 @@ import React, { useMemo, useRef } from 'react'
 import { useLoader } from "react-three-fiber"
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import tinygradient from 'tinygradient'
-const hoursColors = tinygradient(['#18453B', '#0DB14B', '#94AE4A', '#D1DE3F', '#008183', '#63005F'])
+const hoursColors = tinygradient(['#0DB14B', '#18453B', '#008183', '#D1DE3F', '#63005F'])
 const gradient = hoursColors.rgb(10)
 
 const vertexShader = `

@@ -6,3 +6,5 @@ build/*
 !build
 !build/assets
 !build/assets/*
+!build/dataStructure
+!build/dataStructure/*

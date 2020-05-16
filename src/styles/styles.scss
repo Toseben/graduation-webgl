@@ -57,7 +57,7 @@ video {
   top: 0;
   left: 0;
   z-index: 2;
-  background: rgba(0, 0, 0, 0.66);
+  background: rgba(0, 0, 0, 0.825);
   visibility: visible;
   transition: background 0.5s ease-in-out, visibility 0.5s ease-in-out;
   &.hidden {
@@ -82,7 +82,8 @@ video {
   border-radius: 10px;
   // overflow: hidden;
   border: solid 1px black;
-  width: 75vmin;
+  width: 85vw;
+  max-width: 100vh;
   height: 75vmin;
   transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
   transform: scale(1);
@@ -91,18 +92,20 @@ video {
     transform: translateY(50vmin) scale(0.25);
   }
   .videoContainer {
-    width: 50%;
+    width: calc(75vmin * 735 / 1080);
     z-index: 2;
+    opacity: 0.5;
   }
   .closeButton {
-    width: 50px;
-    height: 50px;
-    background: white;
+    width: 25px;
+    height: 25px;
+    background: black;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
     position: absolute;
     top: 0;
     right: 0;
     z-index: 3;
-    border-radius: 10px;
+    border-radius: 5px;
     background-image: url("./assets/close.svg");
     background-size: 50%;
     background-position: center;
@@ -110,15 +113,16 @@ video {
     cursor: pointer;
     // transition: background-color 0.5s ease-in-out;
     &:hover {
-      background-color: #999999;
+      background-color: rgba(255, 255, 255, 0.25);
     }
   }
 }
 
 .studentDetails {
   color: white;
-  width: 50%;
+  width: auto;
   display: flex;
+  flex: 1;
   flex-direction: column;
   text-align: center;
   align-items: center;
@@ -173,12 +177,12 @@ video {
 .tagBox {
   right: auto;
   left: 0;
-  width: 260px;
+  width: 375px;
   .dropbtn {
     color: white;
     border: none;
     cursor: pointer;
-    width: 260px;
+    width: 375px;
     height: 40px;
     background: rgba(0, 0, 0, 0.5);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.75);
@@ -235,12 +239,19 @@ video {
 }
 
 .fireworksContainer {
-  width: 50%;
+  width: calc(75vmin * 735 / 1080);
   height: 100%;
   position: absolute;
   border: solid 1px black;
   border-radius: 10px;
   overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+  &.shows {
+    opacity: 1;
+    visibility: visible;
+  }
 }
 
 .fireworks {

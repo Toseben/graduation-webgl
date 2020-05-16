@@ -1,5 +1,6 @@
+import * as THREE from 'three'
 import React, { Suspense, useMemo } from 'react'
-import { Canvas, useFrame } from 'react-three-fiber';
+import { Canvas, useFrame, useLoader } from 'react-three-fiber';
 // import Stats from 'stats.js'
 
 import Avatars from "./Avatars"
@@ -48,8 +49,8 @@ function ChromaKey({ useStore }) {
 
   useFrame(() => {
     if (!selected || !video || !ctx1 || !ctx2) return
-    const width = 480
-    const height = 852
+    const width = 735
+    const height = 1080
     ctx1.drawImage(video, 0, 0, width, height);
 
     let frame = ctx1.getImageData(0, 0, width, height);
@@ -70,6 +71,17 @@ function ChromaKey({ useStore }) {
   )
 }
 
+const HelmetLogo = () => {
+  const helmetWhite = useLoader(THREE.TextureLoader, 'assets/helmetWhite.png')
+
+  return (
+    <mesh position={[0, 3, -20]} rotation={[0, 0, 0]}>
+      <planeBufferGeometry attach="geometry" args={[3, 3]} />
+      <meshBasicMaterial attach="material" map={helmetWhite} side={THREE.DoubleSide} transparent />
+    </mesh>
+  );
+}
+
 const Graphics = ({ useStore }) => {
   const loaded = useStore(state => state.loaded)
 
@@ -79,17 +91,18 @@ const Graphics = ({ useStore }) => {
       camera={{
         far: 10000,
         near: 0.1,
-        fov: 30,
-        position: [-15 * 250, 10 * 250, 0]
+        fov: 25,
+        position: [-15 * 250, 10 * 250, -15 * 250]
       }}>
 
-      <ChromaKey useStore={useStore} />
+      {/* <ChromaKey useStore={useStore} /> */}
       <Suspense fallback={null}>
         <Avatars useStore={useStore} />
         <FollowLight useStore={useStore} />
         <GroundReflector useStore={useStore} />
         <BackgroundParticles useStore={useStore} />
         <Galaxy useStore={useStore} />
+        <HelmetLogo />
       </Suspense>
 
       <Text color="#fdfdfd" size={0.25} children={'Lymann Briggs College'} rotation={[0, Math.PI, 0]} position={[0, 3.25, 20]} />}
