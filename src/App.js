@@ -255,11 +255,9 @@ export default function App() {
           <div ref={userPlane} className="animateUserInfo" onPointerMove={e => onMouseMove(e)} onPointerDown={e => onPointerDown(e)}>
             <div className={`userContainer ${selectedId !== null ? '' : 'hidden'}`}>
               <div className="fireworksContainer">
-                {videoPath === 'fireworks' &&
-                  <video className="fireworks" autoPlay loop muted>
-                    <source type="video/mp4" src="./assets/fireworks_bg_1.mp4"></source>
-                  </video>
-                }
+                <video className={`fireworks ${videoPath === 'fireworks' ? '' : 'hidden'}`} autoPlay loop muted>
+                  <source type="video/mp4" src="./assets/fireworks_bg_1.mp4"></source>
+                </video>
                 {videoPath === 'speech' && speech === 0 &&
                   <iframe className="embed" allow="autoplay"
                     src="https://www.youtube.com/embed/xH9uwf3zcn8?autoplay=1">
@@ -289,7 +287,7 @@ export default function App() {
         </div>
 
         {studentData && <>
-          <div className={`searchBox ${showInstruction && speech !== 3 ? 'hidden' : ''}`}>
+          <div className={`searchBox ${showInstruction || speech !== 3 ? 'hidden' : ''}`}>
             <ReactSearchBox
               placeholder="Search for a name"
               data={searchData}
@@ -301,7 +299,7 @@ export default function App() {
             />
           </div>
 
-          <div className={`tagBox ${showInstruction && speech !== 3 ? 'hidden' : ''}`}>
+          <div className={`tagBox ${showInstruction || speech !== 3 ? 'hidden' : ''}`}>
             <button className="dropbtn">Select</button>
             <div className="dropdown-content">
               {tagData.map((tag, idx) => {

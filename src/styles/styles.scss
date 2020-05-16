@@ -241,7 +241,6 @@ video {
 .fireworksContainer {
   width: calc(75vmin * 735 / 1080);
   height: 100%;
-  position: absolute;
   border: solid 1px black;
   border-radius: 10px;
   overflow: hidden;
@@ -252,6 +251,13 @@ video {
   min-width: 100%;
   min-height: 100%;
   object-fit: cover;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+  &.hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
 }
 
 // LOADER
@@ -384,4 +390,9 @@ video {
   width: 100%;
   height: 100%;
   border-width: 0;
+  width: calc(75vmin * 735 / 1080);
+  height: 100%;
+  position: absolute;
+  overflow: hidden;
+  top: 0;
 }
