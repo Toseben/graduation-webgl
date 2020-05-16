@@ -184,6 +184,11 @@ export default function App() {
 
   const popupImagePath = selectedId ? studentData[selectedId].smallVideoPath.replace('smallVideos', 'dataStructure/smallVideos') : null
 
+  const audio = useRef()
+  useEffect(() => {
+    audio.current.volume = 0.15
+  }, [])
+
   return (
     <>
       <Div100vh style={{ height: `100rvh` }} className="vis-container">
@@ -210,6 +215,11 @@ export default function App() {
           <p className="instructionsText">CLICK TO</p>
           <p className="instructionsText">ROTATE AND ZOOM</p>
         </div>
+
+        <audio autoPlay loop ref={audio}>
+          <source src="./assets/site_music.mp3" type="audio/mpeg"></source>
+          Your browser does not support the audio element.
+        </audio>
 
         {studentData && <>
           <div className={`searchBox ${showInstruction ? 'hidden' : ''}`}>

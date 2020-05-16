@@ -336,7 +336,7 @@ const AvatarData = [{
   },
 
   {
-    "avatarName": "Jo (JeongAh) Joo",
+    "avatarName": "Jo Joo",
     "markdownPath": "./markdowns/joJoo.md",
     "smallVideoPath": "./smallVideos/joJoo.jpg",
     "largeVideoPath": "./largeVideos/joJoo.mp4",

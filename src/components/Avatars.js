@@ -299,7 +299,7 @@ function VideoAvatar({ useStore, index, avatarArray, uniforms }) {
         ref={mesh}>
         <planeBufferGeometry attach="geometry" args={[480 * scale, 852 * scale]} />
       </mesh>
-      {name && <Text color="#fdfdfd" size={0.02} children={name} position={[0, -0.25, 0.1]} />}
+      {name && hovered.array.lenght === 1 && <Text color="#fdfdfd" size={0.02} children={name} position={[0, -0.25, 0.1]} />}
     </group>
   )
 }

@@ -38,17 +38,17 @@ export default function ControlsOrbit({ useStore }) {
     return dummyVector
   }, [hovered])
 
-  const ringSpeed = 1000
+  const ringSpeed = 5000 / 7
   const height = 0.75
   const circleMult = 8.5
   const axis = new THREE.Vector3(0, 1, 0);
   const angles = new Array(8).fill(null).map((o, idx) => {
-    return new THREE.Vector3(0, height, -1).applyAxisAngle(axis, THREE.Math.degToRad(-90 / 7 * idx + 90))
+    return new THREE.Vector3(0, height, -1).applyAxisAngle(axis, THREE.Math.degToRad(-45 / 7 * idx + 45))
   })
 
   useSpring({
     from: {
-      camPos: [-15 * 250, 10 * 250, 0], camTarget: [0, height, 0], size: 1,
+      camPos: [-15 * 250, 10 * 250, -15 * 250], camTarget: [0, height, 0], size: 1,
     },
     to: async (next, cancel) => {
       await next({ camPos: [angles[0].x * circleMult, height, angles[0].z * circleMult], camTarget: [0, height * 0.5, 0], size: 0, config: { duration: 7500, easing: easings.easeSinInOut } }),
@@ -96,7 +96,7 @@ export default function ControlsOrbit({ useStore }) {
       setLoadAnimDone(true)
       if (!controls.current) return
       controls.current.enabled = true
-      controls.current.maxPolarAngle = Math.PI / 2 - 0.025
+      controls.current.maxPolarAngle = Math.PI / 2 + 0.025
       controls.current.minPolarAngle = 1.25
       controls.current.maxDistance = 10
     }
