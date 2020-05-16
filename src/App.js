@@ -179,7 +179,7 @@ export default function App() {
     setHovered({ array: [{ instance: 0, vidId: 0 }], setter: 'search' })
     setTimeout(() => {
       setSelected({ instance: 0, vidId: 0 })
-    }, 2000)
+    }, 4000)
   }
 
   const popupImagePath = selectedId ? studentData[selectedId].smallVideoPath.replace('smallVideos', 'dataStructure/smallVideos') : null
@@ -235,7 +235,7 @@ export default function App() {
           </div>
 
           <div className={`tagBox ${showInstruction ? 'hidden' : ''}`}>
-            <button className="dropbtn">Filter by tag</button>
+            <button className="dropbtn">Select</button>
             <div className="dropdown-content">
               {tagData.map((tag, idx) => {
                 return <a key={idx} onClick={() => onSelectFilter(tag)}>{tag.value}</a>
