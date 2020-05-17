@@ -239,6 +239,11 @@ export default function App() {
     setHovered(null)
   }
 
+  const clearSelection = () => {
+    setSelected(null)
+    setHovered(null)
+  }
+
   return (
     <>
       <Div100vh style={{ height: `100rvh` }} className="vis-container">
@@ -328,6 +333,10 @@ export default function App() {
               })}
             </div>
           </div>
+
+          {!showInstruction && speech === 3 && hovered && hovered.array.length > 1 &&
+            <div className="clearButton" onClick={() => clearSelection()}>Clear</div>
+          }
 
           {/* <div className='greenScreen'>
             <canvas id="c1" width="735" height="1080"></canvas>

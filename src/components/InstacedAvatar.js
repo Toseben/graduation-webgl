@@ -83,6 +83,7 @@ export default function InstacedAvatar({ useStore, vidId, avatars, material }) {
     if (!loadAnimDone || selected || speech !== 3) return
     if (hovered && instances.includes(e.instanceId) && vidIds.includes(vidId)) return
     if (window.isMouseDown || window.isAnimating || window.isRotating) return
+    if (hovered && hovered.array.length > 1) return
 
     document.body.style.cursor = 'pointer'
     setHovered({ array: [{ instance: e.instanceId, vidId }], setter: 'hover' })
@@ -90,6 +91,8 @@ export default function InstacedAvatar({ useStore, vidId, avatars, material }) {
 
   const onPointerOut = () => {
     if (window.isMouseDown || window.isAnimating || window.isRotating || speech !== 3) return
+    if (hovered && hovered.array.length > 1) return
+    
     document.body.style.cursor = 'auto'
     setHovered(undefined)
   }
