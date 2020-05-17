@@ -1,4 +1,4 @@
-const videoFiles = [
+const VideoFiles = [
   "aavikumarBhakta",
   "aliKadouh",
   "alishaUngkuldee",
@@ -86,4 +86,4 @@ const videoFiles = [
   "victoriaMorrill",
 ]
 
-export default videoFiles
+export default VideoFiles
