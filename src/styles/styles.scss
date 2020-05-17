@@ -80,7 +80,7 @@ video {
   background: rgba(0, 0, 0, 0.25);
   box-shadow: 0 0 40px rgba(255, 255, 255, 0.25);
   border-radius: 10px;
-  // overflow: hidden;
+  overflow: hidden;
   border: solid 1px black;
   width: 85vw;
   max-width: 100vh;
@@ -94,7 +94,7 @@ video {
   .videoContainer {
     width: calc(75vmin * 735 / 1080);
     z-index: 2;
-    opacity: 0.5;
+    position: absolute;
   }
   .closeButton {
     width: 25px;

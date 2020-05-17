@@ -5,7 +5,15 @@ import ReactSearchBox from 'react-search-box'
 import marked from 'marked';
 import { useSpring, animated } from 'react-spring'
 import AvatarData from './data/AvatarData'
+import ImageFiles from './data/ImageFiles'
+import VideoFiles from './data/VideoFiles'
 import axios from 'axios';
+
+const filterAvatarData = AvatarData.filter(avatar => {
+  const imageExists = ImageFiles.includes(avatar.smallVideoPath.split('/')[2].split('.')[0])
+  const videoExists = VideoFiles.includes(avatar.largeVideoPath.split('/')[2].split('.')[0])
+  return (imageExists && videoExists)
+})
 
 import Graphics from './components/Graphics';
 import './styles/styles.scss';
@@ -62,7 +70,7 @@ export default function App() {
   useEffect(() => {
     async function fetchMarkdowns() {
       // const array = []
-      const markdownPromises = AvatarData.map(avatar => {
+      const markdownPromises = filterAvatarData.map(avatar => {
         // array.push(avatar.markdownPath.split('/')[2])
         return axios.get(avatar.markdownPath.replace('markdowns', 'dataStructure/markdowns'))
           .then(res => res.data)
@@ -70,7 +78,7 @@ export default function App() {
       })
 
       const markdownData = await Promise.all(markdownPromises)
-      const data = AvatarData.map((avatar, idx) => {
+      const data = filterAvatarData.map((avatar, idx) => {
         avatar.userId = idx
         avatar.name = avatar.avatarName
         const markdown = markdownData[idx].replace(/markdownAssetPath/g, 'dataStructure/markdownAssetPath')
@@ -175,7 +183,9 @@ export default function App() {
   const [selectedId, popupImagePath, videoPath] = useMemo(() => {
     if (!selected) return [null, null, null]
     const selectedId = selected.instance * silhouetteVids + selected.vidId
-    const popupImagePath = studentData[selectedId].smallVideoPath.replace('smallVideos', 'dataStructure/smallVideos')
+    let popupImagePath = studentData[selectedId].smallVideoPath.replace('smallVideos', 'dataStructure/smallVideos')
+    popupImagePath = popupImagePath.replace('.jpg', '.png')
+
     const videoPath = studentData[selectedId].speech ? 'speech' : 'fireworks'
     return [selectedId, popupImagePath, videoPath]
   }, [selected])
