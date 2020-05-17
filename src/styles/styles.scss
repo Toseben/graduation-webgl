@@ -132,7 +132,7 @@ video {
   }
 }
 
-.clearButton {
+.clearButton, .resetCamera {
   background: black;
   color: white;
   position: absolute;
@@ -148,6 +148,12 @@ video {
   &:hover {
     background-color: rgba(255, 255, 255, 0.25);
   }
+}
+
+.resetCamera {
+  left: auto;
+  top: auto;
+  bottom: 0;
 }
 
 .studentDetails {

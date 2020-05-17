@@ -92,13 +92,13 @@ export default function InstacedAvatar({ useStore, vidId, avatars, material }) {
   const onPointerOut = () => {
     if (window.isMouseDown || window.isAnimating || window.isRotating || speech !== 3) return
     if (hovered && hovered.array.length > 1) return
-    
+
     document.body.style.cursor = 'auto'
     setHovered(undefined)
   }
 
   const onPointerDown = (e) => {
-    if (window.isMouseDown || window.isAnimating || window.isRotating || !loadAnimDone) return
+    if (window.isMouseDown || window.isAnimating || window.isRotating || !loadAnimDone || !instances || !vidIds) return
     if (instances.includes(e.instanceId) && vidIds.includes(vidId)) setSelected({ instance: e.instanceId, vidId })
   }
 

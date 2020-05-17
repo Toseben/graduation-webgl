@@ -244,6 +244,11 @@ export default function App() {
     setHovered(null)
   }
 
+  const resetCamera = () => {
+    setSelected(null)
+    setHovered({ array: [{ instance: 0, vidId: 0 }], setter: 'search' })
+  }
+
   return (
     <>
       <Div100vh style={{ height: `100rvh` }} className="vis-container">
@@ -336,6 +341,10 @@ export default function App() {
 
           {!showInstruction && speech === 3 && hovered && hovered.array.length > 1 &&
             <div className="clearButton" onClick={() => clearSelection()}>Clear</div>
+          }
+
+          {!showInstruction && speech === 3 &&
+            <div className="resetCamera" onClick={() => resetCamera()}>Reset Camera</div>
           }
 
           {/* <div className='greenScreen'>
