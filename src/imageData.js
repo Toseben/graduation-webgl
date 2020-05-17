@@ -1,4 +1,4 @@
-const ImageFiles = [
+const imageData = [
   "aavikumarBhakta",
   "abigailGreen",
   "aliKadouh",
@@ -79,4 +79,4 @@ const ImageFiles = [
   "victoriaMorril",
 ]
 
-export default ImageFiles
+export default imageData
