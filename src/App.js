@@ -5,14 +5,14 @@ import ReactSearchBox from 'react-search-box'
 import marked from 'marked';
 import { useSpring, animated } from 'react-spring'
 import AvatarData from './data/AvatarData.js'
-import imageData from './imageData.js'
+// import imageData from './imageData.js'
 import videoData from './videoData.js'
 import axios from 'axios';
 
 const filterAvatarData = AvatarData.filter(avatar => {
-  const imageExists = imageData.includes(avatar.smallVideoPath.split('/')[2].split('.')[0])
+  // const imageExists = imageData.includes(avatar.smallVideoPath.split('/')[2].split('.')[0])
   const videoExists = videoData.includes(avatar.largeVideoPath.split('/')[2].split('.')[0])
-  return (imageExists && videoExists)
+  return videoExists
 })
 
 import Graphics from './components/Graphics';
