@@ -229,7 +229,14 @@ export default function App() {
     } else {
       setSpeech(3)
       setSelected(null)
+      setHovered(null)
     }
+  }
+
+  const skipSpeeches = () => {
+    setSpeech(3)
+    setSelected(null)
+    setHovered(null)
   }
 
   return (
@@ -295,6 +302,7 @@ export default function App() {
                   <div className="text" dangerouslySetInnerHTML={{ __html: studentData[selectedId].markdown }}></div>
                 }
               </div>
+              {speech !== 3 && <div className="skipButton" onClick={() => skipSpeeches()}>Skip Speeches</div>}
             </div>
           </div>
         </div>
