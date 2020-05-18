@@ -295,6 +295,14 @@ export default function App() {
   return (
     <>
       <Div100vh style={{ height: `100rvh` }} className="vis-container">
+
+        {studentData && <div className="allVideos">
+          {studentData.map((avatar, idx) => {
+            const src = avatar.largeVideoPath.replace('largeVideos', 'dataStructure/largeVideos')
+            return <video key={idx} id={`cartoon-video-${avatar.userId}`} preload={'auto'} loop muted src={src}></video>
+          })}
+        </div>}
+
         <div className={`loadingScreen ${loaded ? 'hidden' : ''}`}>
           <div className="topBar">
             <p className="loading">LOADING<span>.</span><span>.</span><span>.</span></p>
