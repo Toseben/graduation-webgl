@@ -272,8 +272,9 @@ export default function App() {
 
         <div className={`instructions ${showInstruction && loadAnimDone ? '' : 'hidden'}`} onClick={() => onClickInstruction()}>
           <div className="instructionsIcon" />
-          <p className="instructionsText">CLICK TO</p>
-          <p className="instructionsText">ROTATE AND ZOOM</p>
+          <p className="instructionsText">Left click to rotate</p>
+          <p className="instructionsText">Right click to zoom</p>
+          <p className="instructionsText">Go fullscreen! Go green!</p>
         </div>
 
         <audio autoPlay loop ref={audio}>

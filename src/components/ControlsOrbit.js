@@ -165,6 +165,6 @@ export default function ControlsOrbit({ useStore }) {
   })
 
   return (
-    <orbitControls ref={controls} args={[camera, gl.domElement]} enableDamping dampingFactor={0.1} rotateSpeed={-0.5} />
+    <orbitControls ref={controls} args={[camera, gl.domElement]} enableDamping dampingFactor={0.1} rotateSpeed={-0.5} zoomSpeed={2} />
   )
 }

@@ -72,7 +72,7 @@ function ChromaKey({ useStore }) {
 }
 
 const HelmetLogo = () => {
-  const helmetWhite = useLoader(THREE.TextureLoader, 'assets/helmetWhite.png')
+  const helmetWhite = useLoader(THREE.TextureLoader, 'assets/helmetGlow.png')
 
   return (
     <mesh position={[0, 3, -20]} rotation={[0, 0, 0]}>

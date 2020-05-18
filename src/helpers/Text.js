@@ -8,7 +8,7 @@ export default function Text({ children, size = 1, letterSpacing = 0.01, color =
     let x = 0,
       y = 0
     let letters = [...String(children)]
-    let mat = new THREE.MeshBasicMaterial({ color, opacity: 1, transparent: true, side: THREE.DoubleSide, depthTest: false })
+    let mat = new THREE.MeshBasicMaterial({ color, opacity: 1, transparent: true, side: THREE.FrontSide, depthTest: false })
     return [
       letters.map(letter => {
         const geom = new THREE.ShapeBufferGeometry(font.generateShapes(letter, size, 1))
