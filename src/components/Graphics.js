@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import React, { Suspense, useMemo } from 'react'
+import React, { Suspense, useMemo, useRef, useEffect } from 'react'
 import { Canvas, useFrame, useLoader } from 'react-three-fiber';
 // import Stats from 'stats.js'
 
@@ -73,9 +73,17 @@ function ChromaKey({ useStore }) {
 
 const HelmetLogo = () => {
   const helmetWhite = useLoader(THREE.TextureLoader, 'assets/helmetGlow.png')
+  const helmet = useRef()
+
+  useEffect(() => {
+    helmet.current.renderOrder = 3;
+    helmet.current.onBeforeRender = gl => {
+      gl.clearDepth();
+    };
+  }, [])
 
   return (
-    <mesh position={[0, 3, -20]} rotation={[0, 0, 0]}>
+    <mesh ref={helmet} position={[0, 3, -20]} rotation={[0, 0, 0]}>
       <planeBufferGeometry attach="geometry" args={[3, 3]} />
       <meshBasicMaterial attach="material" map={helmetWhite} side={THREE.DoubleSide} transparent />
     </mesh>
