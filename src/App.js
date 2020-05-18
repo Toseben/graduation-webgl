@@ -9,6 +9,45 @@ import AvatarData from './data/AvatarData.js'
 import videoData from './videoData.js'
 import axios from 'axios';
 
+let OSName = "Unknown OS";
+if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
+if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
+if (navigator.appVersion.indexOf("X11") != -1) OSName = "UNIX";
+if (navigator.appVersion.indexOf("Linux") != -1) OSName = "Linux";
+
+let nAgt = navigator.userAgent;
+let browserName = navigator.appName;
+let nameOffset, verOffset;
+
+// In Opera, the true version is after "Opera" or after "Version"
+if ((verOffset = nAgt.indexOf("Opera")) != -1) {
+  browserName = "Opera";
+}
+// In MSIE, the true version is after "MSIE" in userAgent
+else if ((verOffset = nAgt.indexOf("MSIE")) != -1) {
+  browserName = "Microsoft Internet Explorer";
+}
+// In Chrome, the true version is after "Chrome" 
+else if ((verOffset = nAgt.indexOf("Chrome")) != -1) {
+  browserName = "Chrome";
+}
+// In Safari, the true version is after "Safari" or after "Version" 
+else if ((verOffset = nAgt.indexOf("Safari")) != -1) {
+  browserName = "Safari";
+}
+// In Firefox, the true version is after "Firefox" 
+else if ((verOffset = nAgt.indexOf("Firefox")) != -1) {
+  browserName = "Firefox";
+}
+// In most other browsers, "name/version" is at the end of userAgent 
+else if ((nameOffset = nAgt.lastIndexOf(' ') + 1) <
+  (verOffset = nAgt.lastIndexOf('/'))) {
+  browserName = nAgt.substring(nameOffset, verOffset);
+  if (browserName.toLowerCase() == browserName.toUpperCase()) {
+    browserName = navigator.appName;
+  }
+}
+
 const filterAvatarData = AvatarData.filter(avatar => {
   // const imageExists = imageData.includes(avatar.smallVideoPath.split('/')[2].split('.')[0])
   const videoExists = videoData.includes(avatar.largeVideoPath.split('/')[2].split('.')[0])
@@ -249,6 +288,8 @@ export default function App() {
     setHovered({ array: [{ instance: 0, vidId: 0 }], setter: 'search' })
   }
 
+  const showBrowserText = (OSName === 'Windows' && browserName !== 'Chrome') || (OSName === 'MacOS' && browserName !== 'Safari')
+
   return (
     <>
       <Div100vh style={{ height: `100rvh` }} className="vis-container">
@@ -268,6 +309,8 @@ export default function App() {
             <p className="college">LYMAN BRIGGS COLLEGE</p>
             <p className="commencement">- Commencement 2020 -</p>
           </div>
+
+          {showBrowserText && <p className="browserText">For best results, view the LBC Commencement 2020 on the latest versions of the Windows Chrome & Mac Safari browsers</p>}
         </div>
 
         <div className={`instructions ${showInstruction && loadAnimDone ? '' : 'hidden'}`} onClick={() => onClickInstruction()}>
