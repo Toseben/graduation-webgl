@@ -135,7 +135,7 @@ export default function App() {
   const searchData = useMemo(() => {
     if (!studentData) return null
     const searchData = studentData.map(user => {
-      return { value: user.name, userId: user.userId }
+      return { value: user.name, key: user.userId }
     })
 
     return searchData
@@ -167,11 +167,13 @@ export default function App() {
     return tagData
   }, [studentData])
 
+  const searchBox = useRef()
   const onSelect = record => {
     if (!loadAnimDone) return
-    const instance = Math.floor(record.userId / silhouetteVids);
-    const vidId = record.userId % silhouetteVids
+    const instance = Math.floor(record.key / silhouetteVids);
+    const vidId = record.key % silhouetteVids
     setHovered({ array: [{ instance, vidId }], setter: 'search' })
+    searchBox.current.setState({ value: '' })
   }
 
   const onSelectFilter = record => {
@@ -364,6 +366,7 @@ export default function App() {
         {studentData && <>
           <div className={`searchBox ${showInstruction || speech !== 3 ? 'hidden' : ''}`}>
             <ReactSearchBox
+              ref={searchBox}
               placeholder="Search for a name"
               data={searchData}
               onSelect={record => onSelect(record)}
