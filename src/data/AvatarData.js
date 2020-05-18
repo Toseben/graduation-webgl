@@ -146,6 +146,14 @@ const AvatarData = [
     "largeVideoPath": "./largeVideos/ryanCarpenter.mp4",
     "tags": ["Students"]
   },
+  {
+    "avatarName": "Isabel Cary",
+    "markdownPath": "./markdowns/isabelCary.md",
+    "smallVideoPath": "./smallVideos/isabelCary.png",
+    "largeVideoPath": "./largeVideos/isabelCary.mp4",
+    "tags": ["Students"]
+
+  },
 
   {
     "avatarName": "Nicole Curtis",
@@ -317,7 +325,7 @@ const AvatarData = [
   },
 
   {
-    "avatarName": "Jo (JeongAh) Joo",
+    "avatarName": "Jo Joo (JeongAh)",
     "markdownPath": "./markdowns/joJoo.md",
     "smallVideoPath": "./smallVideos/joJoo.png",
     "largeVideoPath": "./largeVideos/joJoo.mp4",
@@ -943,7 +951,7 @@ const AvatarData = [
   {
     "avatarName": "J.P. Lawrence, Ph.D.",
     "markdownPath": "./markdowns/jpLawrence.md",
-    "smallVideoPath": "./smallVideos/jpLawrencet.png",
+    "smallVideoPath": "./smallVideos/jpLawrence.png",
     "largeVideoPath": "./largeVideos/jpLawrence.mp4",
     "tags": ["Faculty Members"]
   },

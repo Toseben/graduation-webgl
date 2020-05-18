@@ -226,9 +226,10 @@ export default function App() {
     let popupImagePath = studentData[selectedId].smallVideoPath.replace('smallVideos', 'dataStructure/smallVideos')
     popupImagePath = popupImagePath.replace('.jpg', '.png')
 
-    const videoPath = studentData[selectedId].speech ? 'speech' : 'fireworks'
+    let videoPath = studentData[selectedId].speech ? 'speech' : 'fireworks'
+    if (studentData[selectedId].avatarName === 'Isabel Cary' && speech === 3) videoPath = 'fireworks'
     return [selectedId, popupImagePath, videoPath]
-  }, [selected])
+  }, [selected, speech])
 
   const onPointerDown = e => { e.stopPropagation() }
 
