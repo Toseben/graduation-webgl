@@ -1,7 +1,6 @@
 import React, { useMemo, useEffect, useRef, useState } from 'react'
 import Div100vh from 'react-div-100vh'
 import create from 'zustand'
-import ReactSearchBox from 'react-search-box'
 import marked from 'marked';
 import { useSpring, animated } from 'react-spring'
 import AvatarData from './data/AvatarData.js'
@@ -173,7 +172,7 @@ export default function App() {
     const instance = Math.floor(record.key / silhouetteVids);
     const vidId = record.key % silhouetteVids
     setHovered({ array: [{ instance, vidId }], setter: 'search' })
-    searchBox.current.setState({ value: '' })
+    setSearchTerm('');
   }
 
   const onSelectFilter = record => {
@@ -292,6 +291,17 @@ export default function App() {
 
   const showBrowserText = (OSName === 'Windows' && browserName !== 'Chrome') || (OSName === 'MacOS' && browserName !== 'Safari')
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const handleChange = event => {
+    setSearchTerm(event.target.value);
+  };
+
+  const results = !searchTerm
+    ? []
+    : searchData.filter(avatar => 
+      avatar.value.toLowerCase().includes(searchTerm.toLocaleLowerCase())
+    );
+
   return (
     <>
       <Div100vh style={{ height: `100rvh` }} className="vis-container">
@@ -373,16 +383,17 @@ export default function App() {
 
         {studentData && <>
           <div className={`searchBox ${showInstruction || speech !== 3 ? 'hidden' : ''}`}>
-            <ReactSearchBox
-              ref={searchBox}
+            <input
+              type="text"
               placeholder="Search for a name"
-              data={searchData}
-              onSelect={record => onSelect(record)}
-              onChange={() => onChange()}
-              fuseConfigs={{
-                threshold: 0.05,
-              }}
+              value={searchTerm}
+              onChange={handleChange}
             />
+            <ul>
+              {results.map((user, idx) => (
+                <li key={idx} onClick={() => onSelect(user)}>{user.value}</li>
+              ))}
+            </ul>
           </div>
 
           <div className={`tagBox ${showInstruction || speech !== 3 ? 'hidden' : ''}`}>

@@ -144,7 +144,7 @@ video {
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.75);
   z-index: 3;
-  height: 40px;
+  // height: 40px;
   margin: 20px;
   text-align: center;
   font-size: 13.33px;
@@ -216,9 +216,36 @@ video {
   }
 }
 
-.searchBox div input {
-  position: absolute;
-  width: 285px;
+.searchBox {
+  input {
+    width: 323px;
+    height: 40px;
+    border-radius: 5px;
+  }
+  ul {
+    background: rgba(0, 0, 0, 0);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.75);
+    border-radius: 5px;
+    margin-top: 10px;
+    li {
+      color: white;
+      display: inherit;
+      background: rgba(0, 0, 0, 0.5);
+      border: solid 1px black;
+      color: white;
+      height: 40px;
+      line-height: 40px;
+      &:hover {
+        background: rgba(#18453b, 0.5);
+      }
+    }
+    li:nth-child(1n + 6) {
+      display: none;
+    }
+    li:nth-child(5), li:nth-child(1) {
+      border-radius: 5px;
+    }
+  }
 }
 
 .tagBox {
@@ -260,29 +287,6 @@ video {
 
 .tagBox:hover .dropdown-content {
   display: block;
-}
-
-.react-search-box-dropdown {
-  background: rgba(0, 0, 0, 0) !important;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.75) !important;
-}
-
-.react-search-box-dropdown ul li {
-  display: inherit !important;
-  background: rgba(0, 0, 0, 0.5) !important;
-  border: solid 1px black !important;
-  color: white;
-  &:hover {
-    background: rgba(#18453b, 0.5) !important;
-  }
-}
-
-.react-search-box-dropdown ul li:nth-child(1n + 6) {
-  display: none !important;
-}
-
-.react-search-box-dropdown ul li:nth-child(5) {
-  border-radius: 5px;
 }
 
 .fireworksContainer {
