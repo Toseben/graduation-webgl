@@ -10,7 +10,6 @@
   font-family: "Gotham-Medium", sans-serif;
   line-height: 1.5;
   -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
   -khtml-user-select: none; /* Konqueror HTML */
   -moz-user-select: none; /* Old versions of Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
@@ -19,6 +18,17 @@
   &:focus {
     outline: none;
   }
+}
+
+p, h1, h2 {
+  -webkit-user-select: none; /* Safari */
+}
+
+input {
+    -webkit-user-select: text; /* Chrome, Opera, Safari */
+    -moz-user-select: text; /* Firefox 2+ */
+    -ms-user-select: text; /* IE 10+ */
+    user-select: text; /* Standard syntax */
 }
 
 body {
