@@ -1,4 +1,4 @@
-# Hannah Boardman
+# Hanna Boardman
 
 ## Major: Zoology
 

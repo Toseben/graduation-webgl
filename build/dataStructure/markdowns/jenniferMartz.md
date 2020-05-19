@@ -1,4 +1,4 @@
-# Jennifer Marz
+# Jennifer Martz
 
 ## Major: Genomics and Molecular Biology
 

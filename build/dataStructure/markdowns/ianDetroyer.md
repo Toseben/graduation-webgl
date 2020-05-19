@@ -1,6 +1,6 @@
 # Ian Detroyer
 
-## Biochemistry & Molecular Biology
+## Major: Biochemistry & Molecular Biology
 
 *Graduating with High Honors*
 

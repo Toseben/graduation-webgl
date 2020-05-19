@@ -1,11 +1,57 @@
 import React, { useMemo, useEffect, useRef, useState } from 'react'
 import Div100vh from 'react-div-100vh'
 import create from 'zustand'
-import ReactSearchBox from 'react-search-box'
 import marked from 'marked';
 import { useSpring, animated } from 'react-spring'
-import AvatarData from './data/AvatarData'
+import AvatarData from './data/AvatarData.js'
+// import imageData from './imageData.js'
+import videoData from './videoData.js'
 import axios from 'axios';
+
+let OSName = "Unknown OS";
+if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
+if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
+if (navigator.appVersion.indexOf("X11") != -1) OSName = "UNIX";
+if (navigator.appVersion.indexOf("Linux") != -1) OSName = "Linux";
+
+let nAgt = navigator.userAgent;
+let browserName = navigator.appName;
+let nameOffset, verOffset;
+
+// In Opera, the true version is after "Opera" or after "Version"
+if ((verOffset = nAgt.indexOf("Opera")) != -1) {
+  browserName = "Opera";
+}
+// In MSIE, the true version is after "MSIE" in userAgent
+else if ((verOffset = nAgt.indexOf("MSIE")) != -1) {
+  browserName = "Microsoft Internet Explorer";
+}
+// In Chrome, the true version is after "Chrome" 
+else if ((verOffset = nAgt.indexOf("Chrome")) != -1) {
+  browserName = "Chrome";
+}
+// In Safari, the true version is after "Safari" or after "Version" 
+else if ((verOffset = nAgt.indexOf("Safari")) != -1) {
+  browserName = "Safari";
+}
+// In Firefox, the true version is after "Firefox" 
+else if ((verOffset = nAgt.indexOf("Firefox")) != -1) {
+  browserName = "Firefox";
+}
+// In most other browsers, "name/version" is at the end of userAgent 
+else if ((nameOffset = nAgt.lastIndexOf(' ') + 1) <
+  (verOffset = nAgt.lastIndexOf('/'))) {
+  browserName = nAgt.substring(nameOffset, verOffset);
+  if (browserName.toLowerCase() == browserName.toUpperCase()) {
+    browserName = navigator.appName;
+  }
+}
+
+const filterAvatarData = AvatarData.filter(avatar => {
+  // const imageExists = imageData.includes(avatar.smallVideoPath.split('/')[2].split('.')[0])
+  const videoExists = videoData.includes(avatar.largeVideoPath.split('/')[2].split('.')[0])
+  return videoExists
+})
 
 import Graphics from './components/Graphics';
 import './styles/styles.scss';
@@ -62,7 +108,7 @@ export default function App() {
   useEffect(() => {
     async function fetchMarkdowns() {
       // const array = []
-      const markdownPromises = AvatarData.map(avatar => {
+      const markdownPromises = filterAvatarData.map(avatar => {
         // array.push(avatar.markdownPath.split('/')[2])
         return axios.get(avatar.markdownPath.replace('markdowns', 'dataStructure/markdowns'))
           .then(res => res.data)
@@ -70,7 +116,7 @@ export default function App() {
       })
 
       const markdownData = await Promise.all(markdownPromises)
-      const data = AvatarData.map((avatar, idx) => {
+      const data = filterAvatarData.map((avatar, idx) => {
         avatar.userId = idx
         avatar.name = avatar.avatarName
         const markdown = markdownData[idx].replace(/markdownAssetPath/g, 'dataStructure/markdownAssetPath')
@@ -88,7 +134,7 @@ export default function App() {
   const searchData = useMemo(() => {
     if (!studentData) return null
     const searchData = studentData.map(user => {
-      return { value: user.name, userId: user.userId }
+      return { value: user.name, key: user.userId }
     })
 
     return searchData
@@ -120,11 +166,13 @@ export default function App() {
     return tagData
   }, [studentData])
 
+  const searchBox = useRef()
   const onSelect = record => {
     if (!loadAnimDone) return
-    const instance = Math.floor(record.userId / silhouetteVids);
-    const vidId = record.userId % silhouetteVids
+    const instance = Math.floor(record.key / silhouetteVids);
+    const vidId = record.key % silhouetteVids
     setHovered({ array: [{ instance, vidId }], setter: 'search' })
+    setSearchTerm('');
   }
 
   const onSelectFilter = record => {
@@ -175,10 +223,13 @@ export default function App() {
   const [selectedId, popupImagePath, videoPath] = useMemo(() => {
     if (!selected) return [null, null, null]
     const selectedId = selected.instance * silhouetteVids + selected.vidId
-    const popupImagePath = studentData[selectedId].smallVideoPath.replace('smallVideos', 'dataStructure/smallVideos')
-    const videoPath = studentData[selectedId].speech ? 'speech' : 'fireworks'
+    let popupImagePath = studentData[selectedId].smallVideoPath.replace('smallVideos', 'dataStructure/smallVideos')
+    popupImagePath = popupImagePath.replace('.jpg', '.png')
+
+    let videoPath = studentData[selectedId].speech ? 'speech' : 'fireworks'
+    if (studentData[selectedId].avatarName === 'Isabel Cary' && speech === 3) videoPath = 'fireworks'
     return [selectedId, popupImagePath, videoPath]
-  }, [selected])
+  }, [selected, speech])
 
   const onPointerDown = e => { e.stopPropagation() }
 
@@ -219,12 +270,50 @@ export default function App() {
     } else {
       setSpeech(3)
       setSelected(null)
+      setHovered(null)
     }
   }
+
+  const skipSpeeches = () => {
+    setSpeech(3)
+    setSelected(null)
+    setHovered(null)
+  }
+
+  const clearSelection = () => {
+    setSelected(null)
+    setHovered(null)
+  }
+
+  const resetCamera = () => {
+    setSelected(null)
+    setHovered({ array: [{ instance: 0, vidId: 0 }], setter: 'search' })
+  }
+
+  const showBrowserText = (OSName === 'Windows' && browserName !== 'Chrome') || (OSName === 'MacOS' && browserName !== 'Safari')
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const handleChange = event => {
+    setSearchTerm(event.target.value);
+  };
+
+  const results = !searchTerm
+    ? []
+    : searchData.filter(avatar => 
+      avatar.value.toLowerCase().includes(searchTerm.toLocaleLowerCase())
+    );
 
   return (
     <>
       <Div100vh style={{ height: `100rvh` }} className="vis-container">
+
+        {studentData && <div className="allVideos">
+          {studentData.map((avatar, idx) => {
+            const src = avatar.largeVideoPath.replace('largeVideos', 'dataStructure/largeVideos')
+            return <video key={idx} id={`cartoon-video-${avatar.userId}`} preload={'auto'} loop muted src={src}></video>
+          })}
+        </div>}
+
         <div className={`loadingScreen ${loaded ? 'hidden' : ''}`}>
           <div className="topBar">
             <p className="loading">LOADING<span>.</span><span>.</span><span>.</span></p>
@@ -241,12 +330,15 @@ export default function App() {
             <p className="college">LYMAN BRIGGS COLLEGE</p>
             <p className="commencement">- Commencement 2020 -</p>
           </div>
+
+          {showBrowserText && <p className="browserText">For best results, view the LBC Commencement 2020 on the latest versions of the Windows Chrome & Mac Safari browsers</p>}
         </div>
 
         <div className={`instructions ${showInstruction && loadAnimDone ? '' : 'hidden'}`} onClick={() => onClickInstruction()}>
           <div className="instructionsIcon" />
-          <p className="instructionsText">CLICK TO</p>
-          <p className="instructionsText">ROTATE AND ZOOM</p>
+          <p className="instructionsText">Left click to rotate</p>
+          <p className="instructionsText">Right click to zoom</p>
+          <p className="instructionsText">Go fullscreen! Go green!</p>
         </div>
 
         <audio autoPlay loop ref={audio}>
@@ -285,21 +377,24 @@ export default function App() {
                   <div className="text" dangerouslySetInnerHTML={{ __html: studentData[selectedId].markdown }}></div>
                 }
               </div>
+              {speech !== 3 && <div className="skipButton" onClick={() => skipSpeeches()}>Skip Speeches</div>}
             </div>
           </div>
         </div>
 
         {studentData && <>
           <div className={`searchBox ${showInstruction || speech !== 3 ? 'hidden' : ''}`}>
-            <ReactSearchBox
+            <input
+              type="text"
               placeholder="Search for a name"
-              data={searchData}
-              onSelect={record => onSelect(record)}
-              onChange={() => onChange()}
-              fuseConfigs={{
-                threshold: 0.05,
-              }}
+              value={searchTerm}
+              onChange={handleChange}
             />
+            <ul>
+              {results.map((user, idx) => (
+                <li key={idx} onClick={() => onSelect(user)}>{user.value}</li>
+              ))}
+            </ul>
           </div>
 
           <div className={`tagBox ${showInstruction || speech !== 3 ? 'hidden' : ''}`}>
@@ -310,6 +405,14 @@ export default function App() {
               })}
             </div>
           </div>
+
+          {!showInstruction && speech === 3 && hovered && hovered.array.length > 1 &&
+            <div className="clearButton" onClick={() => clearSelection()}>Clear</div>
+          }
+
+          {!showInstruction && speech === 3 &&
+            <div className="resetCamera" onClick={() => resetCamera()}>Reset Camera</div>
+          }
 
           {/* <div className='greenScreen'>
             <canvas id="c1" width="735" height="1080"></canvas>

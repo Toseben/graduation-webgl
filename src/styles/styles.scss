@@ -10,7 +10,6 @@
   font-family: "Gotham-Medium", sans-serif;
   line-height: 1.5;
   -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
   -khtml-user-select: none; /* Konqueror HTML */
   -moz-user-select: none; /* Old versions of Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
@@ -19,6 +18,17 @@
   &:focus {
     outline: none;
   }
+}
+
+p, h1, h2 {
+  -webkit-user-select: none; /* Safari */
+}
+
+input {
+    -webkit-user-select: text; /* Chrome, Opera, Safari */
+    -moz-user-select: text; /* Firefox 2+ */
+    -ms-user-select: text; /* IE 10+ */
+    user-select: text; /* Standard syntax */
 }
 
 body {
@@ -80,7 +90,7 @@ video {
   background: rgba(0, 0, 0, 0.25);
   box-shadow: 0 0 40px rgba(255, 255, 255, 0.25);
   border-radius: 10px;
-  // overflow: hidden;
+  overflow: hidden;
   border: solid 1px black;
   width: 85vw;
   max-width: 100vh;
@@ -94,7 +104,7 @@ video {
   .videoContainer {
     width: calc(75vmin * 735 / 1080);
     z-index: 2;
-    opacity: 0.5;
+    position: absolute;
   }
   .closeButton {
     width: 25px;
@@ -111,11 +121,53 @@ video {
     background-position: center;
     background-repeat: no-repeat;
     cursor: pointer;
-    // transition: background-color 0.5s ease-in-out;
     &:hover {
       background-color: rgba(255, 255, 255, 0.25);
     }
   }
+  .skipButton {
+    background: black;
+    color: white;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    z-index: 3;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.25);
+    }
+  }
+}
+
+.clearButton,
+.resetCamera {
+  background: black;
+  color: white;
+  position: absolute;
+  top: 0;
+  left: calc(375px + 20px);
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.75);
+  z-index: 3;
+  // height: 40px;
+  margin: 20px;
+  text-align: center;
+  font-size: 13.33px;
+  padding: 10px 20px;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+  }
+}
+
+.resetCamera {
+  left: auto;
+  top: auto;
+  bottom: 0;
 }
 
 .studentDetails {
@@ -152,7 +204,7 @@ video {
 .tagBox {
   z-index: 2;
   position: absolute;
-  width: 300px;
+  width: 325px;
   right: 0;
   padding: 20px;
   transition: opacity 0.25s ease-in-out, visibility 0.25s ease-in-out;
@@ -170,6 +222,38 @@ video {
     color: white;
     &::placeholder {
       color: white;
+    }
+  }
+}
+
+.searchBox {
+  input {
+    width: 323px;
+    height: 40px;
+    border-radius: 5px;
+  }
+  ul {
+    background: rgba(0, 0, 0, 0);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.75);
+    border-radius: 5px;
+    margin-top: 10px;
+    li {
+      color: white;
+      display: inherit;
+      background: rgba(0, 0, 0, 0.5);
+      border: solid 1px black;
+      color: white;
+      height: 40px;
+      line-height: 40px;
+      &:hover {
+        background: rgba(#18453b, 0.5);
+      }
+    }
+    li:nth-child(1n + 6) {
+      display: none;
+    }
+    li:nth-child(5), li:nth-child(1) {
+      border-radius: 5px;
     }
   }
 }
@@ -213,29 +297,6 @@ video {
 
 .tagBox:hover .dropdown-content {
   display: block;
-}
-
-.react-search-box-dropdown {
-  background: rgba(0, 0, 0, 0) !important;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.75) !important;
-}
-
-.react-search-box-dropdown ul li {
-  display: inherit !important;
-  background: rgba(0, 0, 0, 0.5) !important;
-  border: solid 1px black !important;
-  color: white;
-  &:hover {
-    background: rgba(#18453b, 0.5) !important;
-  }
-}
-
-.react-search-box-dropdown ul li:nth-child(1n + 6) {
-  display: none !important;
-}
-
-.react-search-box-dropdown ul li:nth-child(5) {
-  border-radius: 5px;
 }
 
 .fireworksContainer {
@@ -349,6 +410,17 @@ video {
   }
 }
 
+.browserText {
+  font-size: 16px;
+  width: 380px;
+  text-align: center !important;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  left: 50%;
+  bottom: 0px;
+  margin: 20px;
+}
+
 .instructions {
   width: 100vw;
   height: 100vh;
@@ -395,4 +467,9 @@ video {
   position: absolute;
   overflow: hidden;
   top: 0;
+}
+
+.allVideos {
+  position: absolute;
+  visibility: hidden;
 }

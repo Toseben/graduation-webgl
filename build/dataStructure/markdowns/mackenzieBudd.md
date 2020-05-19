@@ -2,9 +2,9 @@
 
 ## Major: Neuroscience
 
-*Honors Student
-
 *Graduating with High Honors*
+
+*Honors Student*
 
 *Undergraduate Learning Assistant*
 
