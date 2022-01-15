@@ -12,7 +12,7 @@
     "d3-ease": "^1.0.6",
     "glsl-fast-gaussian-blur": "^1.0.2",
     "glslify": "^7.0.0",
-    "marked": "^1.0.0",
+    "marked": "^4.0.10",
     "parcel-plugin-glslify": "^0.1.0",
     "react": "16.13.1",
     "react-div-100vh": "^0.3.8",
